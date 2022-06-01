@@ -1,0 +1,17 @@
+# Driver
+/usr/bin/clang++-5.0
+
+# Language
+-xc++
+-std=c++14
+
+# Includes
+-I./phaser_common/include
+-I./phaser_common/include
+-I./phaser_core/include
+-I./phaser_ros/include
+-I./phaser_viz/include
+-I/home/berlukas/Documents/workspace/phaser_ws/devel/include
+-I/usr/include/eigen3
+-I/opt/ros/melodic/include
+-I/usr/local/cuda/include
