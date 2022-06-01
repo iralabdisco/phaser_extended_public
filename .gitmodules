@@ -1,3 +1,0 @@
-[submodule "phaser"]
-	path = phaser
-	url = git@github.com:ethz-asl/phaser.git
