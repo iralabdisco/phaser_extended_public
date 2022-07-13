@@ -1,4 +1,4 @@
-#!/usr/bin/env zsh
+#!/usr/bin/env sh
 REST=$@
 EXP_DIR="./phaser_test_data/test_clouds/os0/"
 
