@@ -40,7 +40,11 @@ static void registerCloud(
   model::RegistrationResult result =
       ctrl->registerPointCloud(target_cloud, source_cloud);
 
-  LOG(INFO) << "Registration result: " << result.getStateAsVec().transpose();
+  LOG(INFO) << "Registration result dual quaternion: "
+            << result.getStateAsVec().transpose();
+  LOG(INFO) << "Registration rotation: " << result.getRotation().transpose();
+  LOG(INFO) << "Registration translation: "
+            << result.getTranslation().transpose();
   writePointCloud(reg_cloud, result.getRegisteredCloud());
 }
 

@@ -65,7 +65,7 @@ void ZScoreEval::evaluateCorrelationVector(
           FLAGS_z_score_filter_threshold));
   */
 
-  // visualization::PlottyVisualizer::getInstance().createPlotFor(*n_corr_ds);
+  visualization::PlottyVisualizer::getInstance().createPlotFor(*n_corr_ds);
 
   // peak_extraction_.extractPeaks(*n_corr_ds, signals);
 }
