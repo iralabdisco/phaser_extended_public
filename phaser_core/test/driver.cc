@@ -7,6 +7,7 @@
 
 #include "phaser/backend/registration/sph-opt-registration.h"
 #include "phaser/controller/cloud-controller.h"
+#include "phaser/distribution/bingham.h"
 #include "phaser/distribution/gaussian.h"
 
 DEFINE_string(target_cloud, "", "Defines the path to the target cloud.");
@@ -54,9 +55,16 @@ static void registerCloud(
             << std::static_pointer_cast<common::Gaussian>(
                    result.getPosUncertaintyEstimate())
                    ->getCov();
+  LOG(INFO) << "Rotation bingham M: "
+            << std::static_pointer_cast<common::Bingham>(
+                   result.getRotUncertaintyEstimate())
+                   ->getM();
+  LOG(INFO) << "Rotation bingham Z: "
+            << std::static_pointer_cast<common::Bingham>(
+                   result.getRotUncertaintyEstimate())
+                   ->getZ();
   writePointCloud(reg_cloud, result.getRegisteredCloud());
 }
-
 int main(int argc, char** argv) {
   ros::init(argc, argv, "phaser_core_driver");
   google::ParseCommandLineFlags(&argc, &argv, true);

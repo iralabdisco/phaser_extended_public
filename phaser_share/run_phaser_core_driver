@@ -7,7 +7,7 @@ rosrun phaser_core phaser_core_driver \
   --alsologtostderr=1 \
   --target_cloud="${EXP_DIR}target.ply" \
   --source_cloud="${EXP_DIR}source.ply" \
-  --reg_cloud="/home/fdila/registered.ply" \
+  --reg_cloud="${EXP_DIR}registered.ply" \
   --phaser_core_spherical_bandwidth=150 \
   --phaser_core_spherical_low_pass_lower_bound=000 \
   --phaser_core_spherical_low_pass_upper_bound=10000 \
@@ -24,5 +24,5 @@ rosrun phaser_core phaser_core_driver \
   --z_score_lag_max=3 \
   --z_score_threshold=3.0 \
   --phaser_pre_enable_geometric_cloud_segmentation=false \
-  --visualize_correlation=true \
+  --visualize_correlation=false \
   $REST
