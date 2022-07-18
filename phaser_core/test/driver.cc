@@ -7,6 +7,7 @@
 
 #include "phaser/backend/registration/sph-opt-registration.h"
 #include "phaser/controller/cloud-controller.h"
+#include "phaser/distribution/gaussian.h"
 
 DEFINE_string(target_cloud, "", "Defines the path to the target cloud.");
 DEFINE_string(source_cloud, "", "Defines the path to the source cloud.");
@@ -45,6 +46,14 @@ static void registerCloud(
   LOG(INFO) << "Registration rotation: " << result.getRotation().transpose();
   LOG(INFO) << "Registration translation: "
             << result.getTranslation().transpose();
+  LOG(INFO) << "Translation gaussian mean: "
+            << std::static_pointer_cast<common::Gaussian>(
+                   result.getPosUncertaintyEstimate())
+                   ->getMean();
+  LOG(INFO) << "Translation gaussian cov: "
+            << std::static_pointer_cast<common::Gaussian>(
+                   result.getPosUncertaintyEstimate())
+                   ->getCov();
   writePointCloud(reg_cloud, result.getRegisteredCloud());
 }
 
