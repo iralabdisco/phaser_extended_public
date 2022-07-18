@@ -4,6 +4,7 @@
 #include <cmath>
 #include <fstream>
 #include <functional>
+#include <gflags/gflags.h>
 #include <glog/logging.h>
 #include <numeric>
 #include <sstream>
@@ -13,6 +14,10 @@
 #include "phaser/distribution/bingham.h"
 #include "phaser/distribution/gaussian.h"
 #include "phaser/visualization/plotty-visualizer.h"
+
+DEFINE_bool(
+    visualize_correlation, false,
+    "Decide to visualize the correlation plots or not");
 
 namespace phaser_core {
 
@@ -64,8 +69,8 @@ void ZScoreEval::evaluateCorrelationVector(
           std::greater<double>(), std::placeholders::_1,
           FLAGS_z_score_filter_threshold));
   */
-
-  visualization::PlottyVisualizer::getInstance().createPlotFor(*n_corr_ds);
+  if (FLAGS_visualize_correlation)
+    visualization::PlottyVisualizer::getInstance().createPlotFor(*n_corr_ds);
 
   // peak_extraction_.extractPeaks(*n_corr_ds, signals);
 }
