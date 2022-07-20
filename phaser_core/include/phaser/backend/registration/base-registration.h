@@ -23,8 +23,8 @@ class BaseRegistration {
   virtual void getStatistics(common::StatisticsManager* manager) const noexcept;
 
  protected:
-  explicit BaseRegistration() : statistics_manager_("") {}
-  BaseRegistration(const std::string& reference_name)
+  BaseRegistration() : statistics_manager_("") {}
+  explicit BaseRegistration(const std::string& reference_name)
       : statistics_manager_(reference_name) {}
 
   common::StatisticsManager statistics_manager_;
