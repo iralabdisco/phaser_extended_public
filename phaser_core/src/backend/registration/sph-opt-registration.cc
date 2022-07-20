@@ -18,6 +18,10 @@
 
 namespace phaser_core {
 
+DEFINE_int32(
+    phaser_core_spatial_multiple_rotation_estimates, 2,
+    "Defines the maximum number of rotation estimates for the registration.");
+
 SphOptRegistration::SphOptRegistration()
     : BaseRegistration("SphOptRegistration"),
       bandwidth_(phaser_core::FLAGS_phaser_core_spherical_bandwidth),
@@ -44,6 +48,25 @@ model::RegistrationResult SphOptRegistration::registerPointCloud(
   model::RegistrationResult result = estimateRotation(cloud_prev, cloud_cur);
   estimateTranslation(cloud_prev, &result);
   return result;
+}
+
+std::vector<model::RegistrationResult>
+SphOptRegistration::registerPointCloudMultiplePeaks(
+    model::PointCloudPtr cloud_prev, model::PointCloudPtr cloud_cur) {
+  CHECK(cloud_prev);
+  CHECK(cloud_cur);
+  VLOG(1) << "=== Registering point cloud ====================================";
+  VLOG(1) << "Cloud1: " << cloud_prev->getPlyReadDirectory();
+  VLOG(1) << "Cloud2: " << cloud_cur->getPlyReadDirectory();
+  cloud_prev->initialize_kd_tree();
+
+  std::vector<model::RegistrationResult> results;
+  // Register the point cloud.
+  results.push_back(estimateRotation(cloud_prev, cloud_cur));
+  for (auto result : results) {
+    estimateTranslation(cloud_prev, &result);
+  }
+  return results;
 }
 
 model::RegistrationResult SphOptRegistration::estimateRotation(

@@ -98,6 +98,15 @@ model::RegistrationResult SphRegistration::registerPointCloud(
   return result;
 }
 
+std::vector<model::RegistrationResult>
+SphRegistration::registerPointCloudMultiplePeaks(
+    model::PointCloudPtr cloud_prev, model::PointCloudPtr cloud_cur) {
+  LOG(FATAL) << "not yet implemented.";
+
+  std::vector<model::RegistrationResult> results;
+  return results;
+}
+
 model::RegistrationResult SphRegistration::estimateRotation(
     model::PointCloudPtr cloud_prev, model::PointCloudPtr cloud_cur) {
   VLOG(1) << "[SphRegistration] Estimating rotation...";

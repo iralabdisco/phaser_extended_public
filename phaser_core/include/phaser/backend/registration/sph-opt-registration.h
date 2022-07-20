@@ -24,6 +24,9 @@ class SphOptRegistration : public BaseRegistration {
   model::RegistrationResult registerPointCloud(
       model::PointCloudPtr cloud_prev, model::PointCloudPtr cloud_cur) override;
 
+  std::vector<model::RegistrationResult> registerPointCloudMultiplePeaks(
+      model::PointCloudPtr cloud_prev, model::PointCloudPtr cloud_cur);
+
   void getStatistics(
       common::StatisticsManager* manager) const noexcept override;
 
