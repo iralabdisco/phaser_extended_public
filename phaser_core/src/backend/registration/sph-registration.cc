@@ -35,8 +35,8 @@ namespace phaser_core {
 
 SphRegistration::SphRegistration()
     : BaseRegistration("SphRegistration"),
-      sampler_(FLAGS_spherical_bandwith),
       sph_corr_(FLAGS_spherical_bandwith),
+      sampler_(FLAGS_spherical_bandwith),
       alignment_algorithm_(FLAGS_alignment_algorithm),
       rot_evaluation_algorithm_(FLAGS_rot_evaluation_algorithm),
       pos_evaluation_algorithm_(FLAGS_pos_evaluation_algorithm) {
@@ -46,8 +46,8 @@ SphRegistration::SphRegistration(
     std::string&& alignment_algorithm, std::string&& rot_evaluation_algorithm,
     std::string&& pos_evaluation_algorithm)
     : BaseRegistration("SphRegistration"),
-      sampler_(FLAGS_spherical_bandwith),
       sph_corr_(FLAGS_spherical_bandwith),
+      sampler_(FLAGS_spherical_bandwith),
       alignment_algorithm_(alignment_algorithm),
       rot_evaluation_algorithm_(rot_evaluation_algorithm),
       pos_evaluation_algorithm_(pos_evaluation_algorithm) {
@@ -101,6 +101,8 @@ model::RegistrationResult SphRegistration::registerPointCloud(
 std::vector<model::RegistrationResult>
 SphRegistration::registerPointCloudMultiplePeaks(
     model::PointCloudPtr cloud_prev, model::PointCloudPtr cloud_cur) {
+  CHECK(cloud_prev);
+  CHECK(cloud_cur);
   LOG(FATAL) << "not yet implemented.";
 
   std::vector<model::RegistrationResult> results;
