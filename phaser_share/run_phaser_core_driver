@@ -25,4 +25,5 @@ rosrun phaser_core phaser_core_driver \
   --z_score_threshold=3.0 \
   --phaser_pre_enable_geometric_cloud_segmentation=false \
   --visualize_correlation=false \
+  --dump_correlation_to_file=true \
   $REST
