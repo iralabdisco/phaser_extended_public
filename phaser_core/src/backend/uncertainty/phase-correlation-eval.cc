@@ -27,7 +27,7 @@ common::BaseDistributionPtr PhaseCorrelationEval::calcRotationUncertainty(
         corr.begin(), corr.end(), std::ostream_iterator<double>(file, "\n"));
     file.flush();
     file.close();
-    LOG(INFO) << "Dumped translation correlation to file";
+    LOG(INFO) << "Dumped rotation correlation to file";
   }
   return rotation_eval_->evaluateCorrelationFromRotation(bw, corr);
 }
