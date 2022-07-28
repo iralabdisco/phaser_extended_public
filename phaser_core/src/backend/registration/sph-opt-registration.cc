@@ -31,7 +31,7 @@ SphOptRegistration::SphOptRegistration()
 }
 SphOptRegistration::~SphOptRegistration() {}
 
-model::RegistrationResult SphOptRegistration::registerPointCloud(
+std::vector<model::RegistrationResult> SphOptRegistration::registerPointCloud(
     model::PointCloudPtr cloud_prev, model::PointCloudPtr cloud_cur) {
   CHECK(cloud_prev);
   CHECK(cloud_cur);
@@ -43,7 +43,10 @@ model::RegistrationResult SphOptRegistration::registerPointCloud(
   // Register the point cloud.
   model::RegistrationResult result = estimateRotation(cloud_prev, cloud_cur);
   estimateTranslation(cloud_prev, &result);
-  return result;
+
+  std::vector<model::RegistrationResult> results;
+  results.push_back(result);
+  return results;
 }
 
 model::RegistrationResult SphOptRegistration::estimateRotation(

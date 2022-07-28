@@ -79,7 +79,7 @@ void SphRegistration::initializeAlgorithms() {
       std::move(rot_eval), std::move(pos_eval));
 }
 
-model::RegistrationResult SphRegistration::registerPointCloud(
+std::vector<model::RegistrationResult> SphRegistration::registerPointCloud(
     model::PointCloudPtr cloud_prev, model::PointCloudPtr cloud_cur) {
   CHECK(cloud_prev);
   CHECK(cloud_cur);
@@ -95,7 +95,9 @@ model::RegistrationResult SphRegistration::registerPointCloud(
   if (FLAGS_estimate_translation)
     estimateTranslation(cloud_prev, &result);
 
-  return result;
+  std::vector<model::RegistrationResult> results;
+  results.push_back(result);
+  return results;
 }
 
 model::RegistrationResult SphRegistration::estimateRotation(

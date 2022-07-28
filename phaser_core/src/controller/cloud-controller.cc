@@ -1,6 +1,7 @@
 #include "phaser/controller/cloud-controller.h"
 
 #include <glog/logging.h>
+#include <vector>
 
 #include "phaser/backend/registration/sph-opt-registration.h"
 #include "phaser/backend/registration/sph-registration.h"
@@ -22,7 +23,7 @@ void CloudController::initializeRegistrationAlgorithm(
   }
 }
 
-model::RegistrationResult CloudController::registerPointCloud(
+std::vector<model::RegistrationResult> CloudController::registerPointCloud(
     model::PointCloudPtr target, model::PointCloudPtr source) {
   CHECK_NOTNULL(target);
   CHECK_NOTNULL(source);

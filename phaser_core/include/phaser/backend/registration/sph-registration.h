@@ -23,7 +23,7 @@ class SphRegistration : public BaseRegistration {
       std::string&& pos_evaluation_algorithm);
 
   virtual ~SphRegistration() = default;
-  model::RegistrationResult registerPointCloud(
+  std::vector<model::RegistrationResult> registerPointCloud(
       model::PointCloudPtr cloud_prev, model::PointCloudPtr cloud_cur) override;
 
   void getStatistics(

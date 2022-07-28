@@ -43,31 +43,37 @@ static void registerCloud(
 
   auto ctrl = std::make_unique<phaser_core::CloudController>(
       FLAGS_registration_algorithm.c_str());
-  model::RegistrationResult result =
+  std::vector<model::RegistrationResult> results =
       ctrl->registerPointCloud(target_cloud, source_cloud);
 
-  LOG(INFO) << "Registration result dual quaternion: "
-            << result.getStateAsVec().transpose();
-  LOG(INFO) << "Registration rotation: " << result.getRotation().transpose();
-  LOG(INFO) << "Registration translation: "
-            << result.getTranslation().transpose();
-  LOG(INFO) << "Translation gaussian mean: "
-            << std::static_pointer_cast<common::Gaussian>(
-                   result.getPosUncertaintyEstimate())
-                   ->getMean();
-  LOG(INFO) << "Translation gaussian cov: "
-            << std::static_pointer_cast<common::Gaussian>(
-                   result.getPosUncertaintyEstimate())
-                   ->getCov();
-  LOG(INFO) << "Rotation bingham M: "
-            << std::static_pointer_cast<common::Bingham>(
-                   result.getRotUncertaintyEstimate())
-                   ->getM();
-  LOG(INFO) << "Rotation bingham Z: "
-            << std::static_pointer_cast<common::Bingham>(
-                   result.getRotUncertaintyEstimate())
-                   ->getZ();
-  writePointCloud(reg_cloud, result.getRegisteredCloud());
+  int result_index = 0;
+  for (auto result : results) {
+    LOG(INFO) << "Registration number " << result_index;
+    LOG(INFO) << "Registration result dual quaternion: "
+              << result.getStateAsVec().transpose();
+    LOG(INFO) << "Registration rotation: " << result.getRotation().transpose();
+    LOG(INFO) << "Registration translation: "
+              << result.getTranslation().transpose();
+    LOG(INFO) << "Translation gaussian mean: "
+              << std::static_pointer_cast<common::Gaussian>(
+                     result.getPosUncertaintyEstimate())
+                     ->getMean();
+    LOG(INFO) << "Translation gaussian cov: "
+              << std::static_pointer_cast<common::Gaussian>(
+                     result.getPosUncertaintyEstimate())
+                     ->getCov();
+    LOG(INFO) << "Rotation bingham M: "
+              << std::static_pointer_cast<common::Bingham>(
+                     result.getRotUncertaintyEstimate())
+                     ->getM();
+    LOG(INFO) << "Rotation bingham Z: "
+              << std::static_pointer_cast<common::Bingham>(
+                     result.getRotUncertaintyEstimate())
+                     ->getZ();
+    std::string reg_cloud_n = reg_cloud + std::to_string(result_index) + ".ply";
+    result_index++;
+    writePointCloud(reg_cloud_n, result.getRegisteredCloud());
+  }
 }
 
 int main(int argc, char** argv) {

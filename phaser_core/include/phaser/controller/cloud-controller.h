@@ -14,7 +14,7 @@ class CloudController {
  public:
   explicit CloudController(std::string&& method = "sph");
   void initializeRegistrationAlgorithm(const std::string& method);
-  model::RegistrationResult registerPointCloud(
+  std::vector<model::RegistrationResult> registerPointCloud(
       model::PointCloudPtr target, model::PointCloudPtr source);
   void shutdown();
 

@@ -2,14 +2,19 @@
 #include "phaser/common/rotation-utils.h"
 
 #include <glog/logging.h>
+#include <vector>
 
 namespace phaser_core {
 
-model::RegistrationResult SphRegistrationMockTransformed::registerPointCloud(
-    model::PointCloudPtr cloud_prev, 
-    model::PointCloudPtr) {
+std::vector<model::RegistrationResult>
+SphRegistrationMockTransformed::registerPointCloud(
+    model::PointCloudPtr cloud_prev, model::PointCloudPtr) {
   cloud_prev->initialize_kd_tree();
-  return model::RegistrationResult();
+
+  std::vector<model::RegistrationResult> results;
+  model::RegistrationResult result = model::RegistrationResult();
+  results.push_back(result);
+  return results;
 }
 
-} // namespace handler
+}  // namespace phaser_core

@@ -21,7 +21,7 @@ class SphOptRegistration : public BaseRegistration {
   SphOptRegistration();
   virtual ~SphOptRegistration();
 
-  model::RegistrationResult registerPointCloud(
+  std::vector<model::RegistrationResult> registerPointCloud(
       model::PointCloudPtr cloud_prev, model::PointCloudPtr cloud_cur) override;
 
   void getStatistics(
