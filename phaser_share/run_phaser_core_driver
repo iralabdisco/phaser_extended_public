@@ -5,6 +5,7 @@ EXP_DIR="/home/fdila/"
 rosrun phaser_core phaser_core_driver \
   --v=3 \
   --alsologtostderr=1 \
+  --registration_algorithm="sph-opt" \
   --target_cloud="${EXP_DIR}target.ply" \
   --source_cloud="${EXP_DIR}source.ply" \
   --reg_cloud="${EXP_DIR}registered.ply" \

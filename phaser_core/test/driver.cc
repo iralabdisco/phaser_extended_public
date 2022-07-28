@@ -10,12 +10,12 @@
 #include "phaser/distribution/bingham.h"
 #include "phaser/distribution/gaussian.h"
 
+DEFINE_string(
+    registration_algorithm, "sph-opt",
+    "Defines the registration algorithm to use.");
 DEFINE_string(target_cloud, "", "Defines the path to the target cloud.");
 DEFINE_string(source_cloud, "", "Defines the path to the source cloud.");
 DEFINE_string(reg_cloud, "", "Defines the path to the registered cloud.");
-DEFINE_bool(
-    phaser_core_multiple_peaks, false,
-    "Return multiple estimates for registration if true.");
 
 static model::PointCloudPtr readPointCloud(const std::string& path_to_ply) {
   CHECK(!path_to_ply.empty());
@@ -41,7 +41,8 @@ static void registerCloud(
   CHECK_NOTNULL(source_cloud);
   CHECK(!reg_cloud.empty());
 
-  auto ctrl = std::make_unique<phaser_core::CloudController>("sph-opt");
+  auto ctrl = std::make_unique<phaser_core::CloudController>(
+      FLAGS_registration_algorithm.c_str());
   model::RegistrationResult result =
       ctrl->registerPointCloud(target_cloud, source_cloud);
 
@@ -77,10 +78,6 @@ int main(int argc, char** argv) {
 
   VLOG(1) << "=== PHASER CORE DRIVER =====================";
 
-  if (FLAGS_phaser_core_multiple_peaks) {
-    return -1;
-  } else {
-    registerCloud(FLAGS_target_cloud, FLAGS_source_cloud, FLAGS_reg_cloud);
-  }
+  registerCloud(FLAGS_target_cloud, FLAGS_source_cloud, FLAGS_reg_cloud);
   return 0;
 }
