@@ -63,6 +63,8 @@ cs_add_library(${PROJECT_NAME}_lib
    src/backend/uncertainty/base-eval.cc
    src/backend/uncertainty/z-score-eval.cc
    src/backend/uncertainty/z-score-peak-extraction.cc
+   src/backend/uncertainty/neighbors-eval.cc
+   src/backend/uncertainty/neighbors-peak-extraction.cc
    src/backend/uncertainty/gaussian-peak-based-eval.cc
    src/backend/uncertainty/gmm-peak-based-eval.cc
    src/backend/uncertainty/bingham-zscore-peak-based-eval.cc
@@ -70,7 +72,6 @@ cs_add_library(${PROJECT_NAME}_lib
    src/backend/uncertainty/peak-based-eval.cc
    src/backend/uncertainty/phase-correlation-eval.cc
    src/backend/uncertainty/signal-analysis.cc
-   src/backend/uncertainty/neighbors-peak-extraction.cc
 
    src/backend/alignment/phase-aligner.cc
 

@@ -69,20 +69,6 @@ static void registerCloud(
   writePointCloud(reg_cloud, result.getRegisteredCloud());
 }
 
-static void registerCloudMultiplePeaks(
-    const std::string& target, const std::string& source,
-    const std::string& reg_cloud) {
-  model::PointCloudPtr target_cloud = readPointCloud(target);
-  model::PointCloudPtr source_cloud = readPointCloud(source);
-  CHECK_NOTNULL(target_cloud);
-  CHECK_NOTNULL(source_cloud);
-  CHECK(!reg_cloud.empty());
-
-  auto ctrl = std::make_unique<phaser_core::CloudController>("sph-opt");
-  std::vector<model::RegistrationResult> results =
-      ctrl->registerPointCloudMultiplePeaks(target_cloud, source_cloud);
-}
-
 int main(int argc, char** argv) {
   ros::init(argc, argv, "phaser_core_driver");
   google::ParseCommandLineFlags(&argc, &argv, true);
@@ -92,8 +78,7 @@ int main(int argc, char** argv) {
   VLOG(1) << "=== PHASER CORE DRIVER =====================";
 
   if (FLAGS_phaser_core_multiple_peaks) {
-    registerCloudMultiplePeaks(
-        FLAGS_target_cloud, FLAGS_source_cloud, FLAGS_reg_cloud);
+    return -1;
   } else {
     registerCloud(FLAGS_target_cloud, FLAGS_source_cloud, FLAGS_reg_cloud);
   }

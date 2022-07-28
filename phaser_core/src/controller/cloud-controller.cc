@@ -33,18 +33,6 @@ model::RegistrationResult CloudController::registerPointCloud(
   return registrator_->registerPointCloud(target, source);
 }
 
-std::vector<model::RegistrationResult>
-CloudController::registerPointCloudMultiplePeaks(
-    model::PointCloudPtr target, model::PointCloudPtr source) {
-  CHECK_NOTNULL(target);
-  CHECK_NOTNULL(source);
-  CHECK_NOTNULL(registrator_);
-  preprocessor_.process(target);
-  preprocessor_.process(source);
-
-  return registrator_->registerPointCloudMultiplePeaks(target, source);
-}
-
 void CloudController::shutdown() {
   // NOOP
 }

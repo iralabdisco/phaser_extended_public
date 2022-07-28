@@ -16,8 +16,6 @@ class CloudController {
   void initializeRegistrationAlgorithm(const std::string& method);
   model::RegistrationResult registerPointCloud(
       model::PointCloudPtr target, model::PointCloudPtr source);
-  std::vector<model::RegistrationResult> registerPointCloudMultiplePeaks(
-      model::PointCloudPtr target, model::PointCloudPtr source);
   void shutdown();
 
  private:

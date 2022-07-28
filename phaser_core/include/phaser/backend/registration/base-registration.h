@@ -16,9 +16,6 @@ class BaseRegistration {
   virtual ~BaseRegistration() = default;
   virtual model::RegistrationResult registerPointCloud(
       model::PointCloudPtr cloud_prev, model::PointCloudPtr cloud_cur) = 0;
-  virtual std::vector<model::RegistrationResult>
-  registerPointCloudMultiplePeaks(
-      model::PointCloudPtr cloud_prev, model::PointCloudPtr cloud_cur) = 0;
 
   virtual void getStatistics(common::StatisticsManager* manager) const noexcept;
 
