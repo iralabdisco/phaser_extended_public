@@ -23,10 +23,9 @@ class SphRegistrationMockTranslated : public SphRegistration {
       model::PointCloud& cloud, const float x, const float y,  // NOLINT
       const float z) const;
 
-  std::vector<model::FunctionValue> pertubFunctionValues(
-      std::vector<model::FunctionValue>& values, const float x,
-      const float y,  // NOLINT
-      const float z) const;
+  std::vector<model::FunctionValue> pertubFunctionValues(        // NOLINT
+      std::vector<model::FunctionValue>& values, const float x,  // NOLINT
+      const float y, const float z) const;
 
   double mock_trans_x_;
   double mock_trans_y_;
