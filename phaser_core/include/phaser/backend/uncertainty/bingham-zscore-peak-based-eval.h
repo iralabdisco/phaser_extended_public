@@ -1,5 +1,5 @@
-#ifndef PHASER_BACKEND_UNCERTAINTY_BINGHAM_PEAK_BASED_EVAL_H_
-#define PHASER_BACKEND_UNCERTAINTY_BINGHAM_PEAK_BASED_EVAL_H_
+#ifndef PHASER_BACKEND_UNCERTAINTY_BINGHAM_ZSCORE_PEAK_BASED_EVAL_H_
+#define PHASER_BACKEND_UNCERTAINTY_BINGHAM_ZSCORE_PEAK_BASED_EVAL_H_
 
 #include <set>
 #include <vector>
@@ -10,7 +10,7 @@
 
 namespace phaser_core {
 
-class BinghamPeakBasedEval : public ZScoreEval {
+class BinghamZScorePeakBasedEval : public ZScoreEval {
  public:
   common::BaseDistributionPtr evaluatePeakBasedCorrelation(
       const uint32_t bw, const std::set<uint32_t>& signals,
@@ -33,4 +33,4 @@ class BinghamPeakBasedEval : public ZScoreEval {
 
 }  // namespace phaser_core
 
-#endif  // PHASER_BACKEND_UNCERTAINTY_BINGHAM_PEAK_BASED_EVAL_H_
+#endif  // PHASER_BACKEND_UNCERTAINTY_BINGHAM_ZSCORE_PEAK_BASED_EVAL_H_

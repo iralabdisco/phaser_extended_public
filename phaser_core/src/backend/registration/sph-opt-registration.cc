@@ -9,7 +9,7 @@
 #include "phaser/backend/correlation/spherical-combined-worker.h"
 #include "phaser/backend/correlation/spherical-intensity-worker.h"
 #include "phaser/backend/correlation/spherical-range-worker.h"
-#include "phaser/backend/uncertainty/bingham-peak-based-eval.h"
+#include "phaser/backend/uncertainty/bingham-zscore-peak-based-eval.h"
 #include "phaser/backend/uncertainty/gaussian-peak-based-eval.h"
 #include "phaser/common/core-gflags.h"
 #include "phaser/common/rotation-utils.h"
@@ -26,7 +26,7 @@ SphOptRegistration::SphOptRegistration()
     : BaseRegistration("SphOptRegistration"),
       bandwidth_(phaser_core::FLAGS_phaser_core_spherical_bandwidth),
       sampler_(phaser_core::FLAGS_phaser_core_spherical_bandwidth) {
-  BaseEvalPtr rot_eval = std::make_unique<BinghamPeakBasedEval>();
+  BaseEvalPtr rot_eval = std::make_unique<BinghamZScorePeakBasedEval>();
   BaseEvalPtr pos_eval = std::make_unique<GaussianPeakBasedEval>();
   correlation_eval_ = std::make_unique<PhaseCorrelationEval>(
       std::move(rot_eval), std::move(pos_eval));
@@ -62,6 +62,9 @@ SphOptRegistration::registerPointCloudMultiplePeaks(
 
   std::vector<model::RegistrationResult> results;
   // Register the point cloud.
+  // Get rotation correlation
+  // Find peaks
+  // For each peak estimate rotation and push result into vector
   results.push_back(estimateRotation(cloud_prev, cloud_cur));
   for (auto result : results) {
     estimateTranslation(cloud_prev, &result);

@@ -65,7 +65,7 @@ cs_add_library(${PROJECT_NAME}_lib
    src/backend/uncertainty/z-score-peak-extraction.cc
    src/backend/uncertainty/gaussian-peak-based-eval.cc
    src/backend/uncertainty/gmm-peak-based-eval.cc
-   src/backend/uncertainty/bingham-peak-based-eval.cc
+   src/backend/uncertainty/bingham-zscore-peak-based-eval.cc
    src/backend/uncertainty/bmm-peak-based-eval.cc
    src/backend/uncertainty/peak-based-eval.cc
    src/backend/uncertainty/phase-correlation-eval.cc

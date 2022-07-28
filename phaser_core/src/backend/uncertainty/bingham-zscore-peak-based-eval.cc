@@ -1,4 +1,4 @@
-#include "phaser/backend/uncertainty/bingham-peak-based-eval.h"
+#include "phaser/backend/uncertainty/bingham-zscore-peak-based-eval.h"
 
 #include <algorithm>
 #include <glog/logging.h>
@@ -11,7 +11,8 @@ DEFINE_int32(
 
 namespace phaser_core {
 
-common::BaseDistributionPtr BinghamPeakBasedEval::evaluatePeakBasedCorrelation(
+common::BaseDistributionPtr
+BinghamZScorePeakBasedEval::evaluatePeakBasedCorrelation(
     const uint32_t bw, const std::set<uint32_t>& signals,
     const std::vector<double>& normalized_corr) const {
   common::BinghamPtr bingham = std::make_shared<common::Bingham>(
@@ -19,7 +20,7 @@ common::BaseDistributionPtr BinghamPeakBasedEval::evaluatePeakBasedCorrelation(
   return bingham;
 }
 
-common::Bingham BinghamPeakBasedEval::fitRotationalBinghamDistribution(
+common::Bingham BinghamZScorePeakBasedEval::fitRotationalBinghamDistribution(
     const uint32_t bw, const std::set<uint32_t>& signals,
     const std::vector<double>& norm_corr) const {
   const uint32_t n_signals = signals.size();
@@ -43,7 +44,7 @@ common::Bingham BinghamPeakBasedEval::fitRotationalBinghamDistribution(
   return common::Bingham::fit(samples, weights);
 }
 
-void BinghamPeakBasedEval::calculateStartEndNeighbor(
+void BinghamZScorePeakBasedEval::calculateStartEndNeighbor(
     const uint32_t index, const uint32_t n_corr, uint32_t* start,
     uint32_t* end) const {
   CHECK_NOTNULL(start);
@@ -56,7 +57,7 @@ void BinghamPeakBasedEval::calculateStartEndNeighbor(
              : index + FLAGS_bingham_peak_neighbors;
 }
 
-void BinghamPeakBasedEval::retrievePeakNeighbors(
+void BinghamZScorePeakBasedEval::retrievePeakNeighbors(
     const uint32_t bw, const uint32_t start, const uint32_t end,
     const std::vector<double>& norm_corr, Eigen::MatrixXd* samples,
     Eigen::RowVectorXd* weights) const {

@@ -5,7 +5,7 @@
 #include <iostream>
 
 #include "phaser/backend/alignment/phase-aligner.h"
-#include "phaser/backend/uncertainty/bingham-peak-based-eval.h"
+#include "phaser/backend/uncertainty/bingham-zscore-peak-based-eval.h"
 #include "phaser/backend/uncertainty/bmm-peak-based-eval.h"
 #include "phaser/backend/uncertainty/gaussian-peak-based-eval.h"
 #include "phaser/backend/uncertainty/gmm-peak-based-eval.h"
@@ -58,7 +58,7 @@ void SphRegistration::initializeAlgorithms() {
   // Rotational evaluation
   BaseEvalPtr rot_eval;
   if (rot_evaluation_algorithm_ == "bingham")
-    rot_eval = std::make_unique<BinghamPeakBasedEval>();
+    rot_eval = std::make_unique<BinghamZScorePeakBasedEval>();
   else if (rot_evaluation_algorithm_ == "bmm")
     rot_eval = std::make_unique<BmmPeakBasedEval>();
   else
