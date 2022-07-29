@@ -54,24 +54,25 @@ static void registerCloud(
     LOG(INFO) << "Registration rotation: " << result.getRotation().transpose();
     LOG(INFO) << "Registration translation: "
               << result.getTranslation().transpose();
-    LOG(INFO) << "Translation gaussian mean: "
-              << std::static_pointer_cast<common::Gaussian>(
-                     result.getPosUncertaintyEstimate())
-                     ->getMean();
-    LOG(INFO) << "Translation gaussian cov: "
-              << std::static_pointer_cast<common::Gaussian>(
-                     result.getPosUncertaintyEstimate())
-                     ->getCov();
-    LOG(INFO) << "Rotation bingham M: "
-              << std::static_pointer_cast<common::Bingham>(
-                     result.getRotUncertaintyEstimate())
-                     ->getM();
-    LOG(INFO) << "Rotation bingham Z: "
-              << std::static_pointer_cast<common::Bingham>(
-                     result.getRotUncertaintyEstimate())
-                     ->getZ();
+    // LOG(INFO) << "Translation gaussian mean: "
+    //           << std::static_pointer_cast<common::Gaussian>(
+    //                  result.getPosUncertaintyEstimate())
+    //                  ->getMean();
+    // LOG(INFO) << "Translation gaussian cov: "
+    //           << std::static_pointer_cast<common::Gaussian>(
+    //                  result.getPosUncertaintyEstimate())
+    //                  ->getCov();
+    // LOG(INFO) << "Rotation bingham M: "
+    //           << std::static_pointer_cast<common::Bingham>(
+    //                  result.getRotUncertaintyEstimate())
+    //                  ->getM();
+    // LOG(INFO) << "Rotation bingham Z: "
+    //           << std::static_pointer_cast<common::Bingham>(
+    //                  result.getRotUncertaintyEstimate())
+    //                  ->getZ();
     std::string reg_cloud_n = reg_cloud + std::to_string(result_index) + ".ply";
     result_index++;
+    LOG(INFO) << "Writing point cloud to: " << reg_cloud_n;
     writePointCloud(reg_cloud_n, result.getRegisteredCloud());
   }
 }
