@@ -3,11 +3,8 @@
 #include <algorithm>
 #include <glog/logging.h>
 
+#include "phaser/common/core-gflags.h"
 #include "phaser/common/rotation-utils.h"
-
-DEFINE_int32(
-    bingham_peak_neighbors, 0,
-    "Determines the number of neighbors used for the Bingham calculation.");
 
 namespace phaser_core {
 

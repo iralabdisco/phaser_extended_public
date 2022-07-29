@@ -3,6 +3,7 @@
 #include <glog/logging.h>
 #include <vector>
 
+#include "phaser/backend/registration/sph-opt-multiple-registration.h"
 #include "phaser/backend/registration/sph-opt-registration.h"
 #include "phaser/backend/registration/sph-registration.h"
 
@@ -18,6 +19,8 @@ void CloudController::initializeRegistrationAlgorithm(
     registrator_ = std::make_unique<SphRegistration>();
   } else if (method == "sph-opt") {
     registrator_ = std::make_unique<SphOptRegistration>();
+  } else if (method == "sph-opt-multiple") {
+    registrator_ = std::make_unique<SphOptMultipleRegistration>();
   } else {
     LOG(FATAL) << "Unknown method specified: " << method;
   }

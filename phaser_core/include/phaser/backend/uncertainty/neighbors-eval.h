@@ -23,13 +23,22 @@ class NeighborsEval : public BaseEval {
   common::BaseDistributionPtr evaluateCorrelationFromRotation(
       const uint32_t bw, const std::vector<double>& corr) override;
 
+  virtual common::BaseDistributionPtr evaluatePeakBasedCorrelation(
+      const uint32_t bw, const std::vector<double>& normalized_corr,
+      int32_t index) const;
+  virtual common::BaseDistributionPtr evaluatePeakBasedCorrelation(
+      const uint32_t n_voxels, const int discretize_lower_bound,
+      const int discretize_upper_bound,
+      const std::vector<double>& normalized_corr, int32_t index) const;
+
+  NeighborsPeakExtraction& getPeakExtraction();
+
  private:
-  void evaluateCorrelationVector(
-      const std::vector<double>& corr, std::set<uint32_t>* signals,
-      std::vector<double>* n_corr_ds);
+  void normalizeCorrelationVector(
+      const std::vector<double>& corr, std::vector<double>* n_corr_ds);
 
   common::StatisticsManager manager_;
-  NeighborsPeakExtraction peak_extractor_;
+  NeighborsPeakExtraction peak_extraction_;
 };
 
 }  // namespace phaser_core

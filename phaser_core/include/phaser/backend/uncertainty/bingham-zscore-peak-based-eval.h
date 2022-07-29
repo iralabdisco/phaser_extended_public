@@ -6,6 +6,7 @@
 
 #include "phaser/backend/alignment/base-aligner.h"
 #include "phaser/backend/uncertainty/z-score-eval.h"
+#include "phaser/common/core-gflags.h"
 #include "phaser/distribution/bingham.h"
 
 namespace phaser_core {

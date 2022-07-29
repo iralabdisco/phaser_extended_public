@@ -1,6 +1,7 @@
 #include "phaser/backend/uncertainty/neighbors-peak-extraction.h"
 
 #include <glog/logging.h>
+#include <set>
 
 DEFINE_int32(
     peak_extraction_neighbors, 2,
@@ -12,6 +13,17 @@ DEFINE_double(
     "Do not evaluate peaks that are under threshold*maximum correlation.");
 
 namespace phaser_core {
+
+NeighborsPeakExtraction::NeighborsPeakExtraction()
+    : manager_("neighbors-peaks"),
+      grid_size_(0),
+      peaks_discard_threshold_(FLAGS_peaks_discard_threshold),
+      neighbors_radius_(FLAGS_peak_extraction_neighbors),
+      max_peaks_number_(FLAGS_max_peaks_number) {
+  CHECK_GT(neighbors_radius_, 0);
+  CHECK_GT(max_peaks_number_, 0);
+}
+
 NeighborsPeakExtraction::NeighborsPeakExtraction(int32_t grid_size)
     : manager_("neighbors-peaks"),
       grid_size_(grid_size),
@@ -24,10 +36,15 @@ NeighborsPeakExtraction::NeighborsPeakExtraction(int32_t grid_size)
 
 void NeighborsPeakExtraction::extractPeaks(
     const std::vector<double>& corr, std::set<uint32_t>* peaks) {
+  VLOG(1) << "Extracting peaks...";
+
   int32_t corr_size = corr.size();
   std::vector<int32_t> neighbors;
   bool is_max = true;
 
+  peaks->clear();
+
+  VLOG(1) << "Inizio FOR...";
   for (int32_t i = 0; i < corr_size; i++) {
     // TODO(fdila) add max to threshold
     if (corr.at(i) > peaks_discard_threshold_) {
@@ -39,7 +56,9 @@ void NeighborsPeakExtraction::extractPeaks(
         }
       }
       if (is_max) {
-        peaks->insert((uint32_t)i);
+        uint32_t uint_i = (uint32_t)i;
+        VLOG(1) << "inserting " << uint_i;
+        peaks->insert(uint_i);
       }
       is_max = true;
     }

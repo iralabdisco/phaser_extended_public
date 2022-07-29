@@ -17,6 +17,7 @@ typedef struct grid_indexes {
 
 class NeighborsPeakExtraction : public BasePeakExtraction {
  public:
+  NeighborsPeakExtraction();
   explicit NeighborsPeakExtraction(int32_t grid_size);
 
   void extractPeaks(

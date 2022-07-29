@@ -38,4 +38,14 @@ DEFINE_int32(
     phaser_core_spatial_low_pass_upper_bound, 100000,
     "Defines the lower frequency bound of the spatial low pass filtering.");
 
+// Distribution fitting parameters
+DEFINE_int32(
+    bingham_peak_neighbors, 0,
+    "Determines the number of neighbors used for the Bingham calculation.");
+
+DEFINE_int32(
+    bingham_peak_neighbors_radius, 1,
+    "Defines the radius used to find local maxima and to fit the bibgham "
+    "distribuition.");
+
 }  // namespace phaser_core
