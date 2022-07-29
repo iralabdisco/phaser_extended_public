@@ -41,15 +41,18 @@ SphOptMultipleRegistration::registerPointCloud(
       correlatePointcloud(cloud_prev, cloud_cur);
   SphericalCorrelation& corr = correlations[0];
 
-  NeighborsPeakExtraction rot_peak_extractor(bandwidth_ * 2);
+  NeighborsPeakExtraction rot_peak_extractor(
+      bandwidth_ * 2, FLAGS_bingham_peak_neighbors_radius);
   std::set<uint32_t> rot_peaks;
   rot_peak_extractor.extractPeaks(corr.getCorrelation(), &rot_peaks);
-  std::vector<model::RegistrationResult> results = estimateMultipleRotation(
-      cloud_prev, cloud_cur, corr.getCorrelation(), rot_peaks);
 
-  for (auto result : results) {
-    estimateTranslation(cloud_prev, &result);
-  }
+  std::vector<model::RegistrationResult> results;
+  // std::vector<model::RegistrationResult> results = estimateMultipleRotation(
+  //     cloud_prev, cloud_cur, corr.getCorrelation(), rot_peaks);
+
+  // for (auto result : results) {
+  //   estimateTranslation(cloud_prev, &result);
+  // }
 
   return results;
 }

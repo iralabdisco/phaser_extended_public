@@ -24,6 +24,10 @@ DECLARE_int32(phaser_core_spatial_low_pass_upper_bound);
 DECLARE_int32(bingham_peak_neighbors);
 DECLARE_int32(bingham_peak_neighbors_radius);
 
+// Peak parameters
+DECLARE_int32(max_peaks_number);
+DECLARE_double(peaks_discard_threshold);
+
 }  // namespace phaser_core
 
 #endif  // PHASER_COMMON_CORE_GFLAGS_H_

@@ -20,7 +20,7 @@ rosrun phaser_core phaser_core_driver \
   --phaser_core_spatial_low_pass_upper_bound=150 \
   --phaser_core_spatial_zero_padding=0 \
   --gaussian_peak_neighbors=4 \
-  --bingham_peak_neighbors_radius=0 \
+  --bingham_peak_neighbors_radius=1\
   --phaser_pre_enable_geometric_cloud_segmentation=false \
   --visualize_correlation=false \
   --dump_correlation_to_file=true \

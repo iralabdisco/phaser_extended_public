@@ -17,7 +17,7 @@ class GridUtils {
  public:
   static void getNeighbors(
       int32_t index, int32_t grid_size, int32_t neighbors_radius,
-      std::vector<int32_t> neighbors_indexes);
+      std::vector<int32_t>* neighbors_indexes);
   static grid_indexes_t ind2sub(int32_t index, int32_t grid_size);
   static int32_t sub2ind(int32_t i, int32_t j, int32_t k, int32_t grid_size);
 };

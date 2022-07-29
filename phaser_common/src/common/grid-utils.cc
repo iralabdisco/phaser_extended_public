@@ -1,11 +1,13 @@
 #include "phaser/common/grid-utils.h"
 
+#include <glog/logging.h>
+
 namespace common {
 
 void GridUtils::getNeighbors(
     int32_t index, int32_t grid_size, int32_t neighbors_radius,
-    std::vector<int32_t> neighbors_indexes) {
-  neighbors_indexes.clear();
+    std::vector<int32_t>* neighbors_indexes) {
+  neighbors_indexes->clear();
 
   int32_t index_x = 0;
   int32_t index_y = 0;
@@ -31,7 +33,7 @@ void GridUtils::getNeighbors(
           continue;
 
         int32_t current_index = sub2ind(index_x, index_y, index_z, grid_size);
-        neighbors_indexes.push_back(current_index);
+        neighbors_indexes->push_back(current_index);
       }
     }
   }

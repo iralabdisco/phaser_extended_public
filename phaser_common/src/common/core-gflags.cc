@@ -48,4 +48,11 @@ DEFINE_int32(
     "Defines the radius used to find local maxima and to fit the bibgham "
     "distribuition.");
 
+// Peak parameters
+DEFINE_int32(
+    max_peaks_number, 4, "Take only the first best max_peak_number peaks.");
+DEFINE_double(
+    peaks_discard_threshold, 0.5,
+    "Do not evaluate peaks that are under threshold*maximum correlation.");
+
 }  // namespace phaser_core

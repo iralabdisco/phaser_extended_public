@@ -40,7 +40,6 @@ static void registerCloud(
   CHECK_NOTNULL(target_cloud);
   CHECK_NOTNULL(source_cloud);
   CHECK(!reg_cloud.empty());
-
   auto ctrl = std::make_unique<phaser_core::CloudController>(
       FLAGS_registration_algorithm.c_str());
   std::vector<model::RegistrationResult> results =
