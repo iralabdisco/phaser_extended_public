@@ -1,7 +1,9 @@
 #include "phaser/backend/uncertainty/neighbors-peak-extraction.h"
 
+#include <algorithm>
 #include <glog/logging.h>
 #include <set>
+#include <vector>
 
 #include "phaser/common/core-gflags.h"
 #include "phaser/common/grid-utils.h"
@@ -57,6 +59,29 @@ void NeighborsPeakExtraction::extractPeaks(
     }
   }
   VLOG(1) << "Found " << peaks->size() << " peaks";
+  return;
+}
+
+void NeighborsPeakExtraction::getMaxPeaks(
+    const std::set<uint32_t>* peaks, const std::vector<double>* norm_corr,
+    std::vector<int32_t>* max_peaks) {
+  std::vector<std::pair<int32_t, double>> peaks_with_idx;
+
+  for (auto peak : *peaks) {
+    peaks_with_idx.push_back(std::make_pair(peak, norm_corr->at(peak)));
+  }
+
+  // sort descending based on the correlation
+  std::sort(
+      peaks_with_idx.begin(), peaks_with_idx.end(),
+      [](auto& left, auto& right) { return left.second > right.second; });
+
+  max_peaks->clear();
+
+  for (int i = 0; i < max_peaks_number_; i++) {
+    max_peaks->push_back(peaks_with_idx.at(i).first);
+  }
+
   return;
 }
 

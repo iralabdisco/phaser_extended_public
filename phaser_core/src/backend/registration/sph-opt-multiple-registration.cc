@@ -66,6 +66,9 @@ SphOptMultipleRegistration::registerPointCloud(
 
   rot_peak_extractor.extractPeaks(corr_norm, &rot_peaks);
 
+  std::vector<int32_t> max_rot_peaks;
+  rot_peak_extractor.getMaxPeaks(&rot_peaks, &corr_norm, &max_rot_peaks);
+
   if (FLAGS_dump_peaks_to_file) {
     std::ofstream file;
     file.open("rotation_peaks.csv");
