@@ -58,13 +58,13 @@ void NeighborsPeakExtraction::extractPeaks(
       is_max = true;
     }
   }
-  VLOG(1) << "Found " << peaks->size() << " peaks";
+  VLOG(4) << "Found " << peaks->size() << " peaks";
   return;
 }
 
 void NeighborsPeakExtraction::getMaxPeaks(
     const std::set<uint32_t>* peaks, const std::vector<double>* norm_corr,
-    std::vector<int32_t>* max_peaks) {
+    std::set<uint32_t>* max_peaks) {
   std::vector<std::pair<int32_t, double>> peaks_with_idx;
 
   for (auto peak : *peaks) {
@@ -79,7 +79,7 @@ void NeighborsPeakExtraction::getMaxPeaks(
   max_peaks->clear();
 
   for (int i = 0; i < max_peaks_number_; i++) {
-    max_peaks->push_back(peaks_with_idx.at(i).first);
+    max_peaks->insert(peaks_with_idx.at(i).first);
   }
 
   return;

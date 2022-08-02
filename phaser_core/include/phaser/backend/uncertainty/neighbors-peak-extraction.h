@@ -25,7 +25,7 @@ class NeighborsPeakExtraction : public BasePeakExtraction {
 
   void getMaxPeaks(
       const std::set<uint32_t>* peaks, const std::vector<double>* norm_corr,
-      std::vector<int32_t>* max_peaks);
+      std::set<uint32_t>* max_peaks);
 
   int32_t getNeighborsRadius() const;
   int32_t& getNeighborsRadius();

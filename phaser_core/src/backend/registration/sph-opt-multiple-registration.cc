@@ -66,7 +66,7 @@ SphOptMultipleRegistration::registerPointCloud(
 
   rot_peak_extractor.extractPeaks(corr_norm, &rot_peaks);
 
-  std::vector<int32_t> max_rot_peaks;
+  std::set<uint32_t> max_rot_peaks;
   rot_peak_extractor.getMaxPeaks(&rot_peaks, &corr_norm, &max_rot_peaks);
 
   if (FLAGS_dump_peaks_to_file) {
@@ -81,8 +81,8 @@ SphOptMultipleRegistration::registerPointCloud(
   }
 
   std::vector<model::RegistrationResult> results;
-  // std::vector<model::RegistrationResult> results = estimateMultipleRotation(
-  //     cloud_prev, cloud_cur, corr.getCorrelation(), rot_peaks);
+  results = estimateMultipleRotation(
+      cloud_prev, cloud_cur, corr.getCorrelation(), max_rot_peaks);
 
   // for (auto result : results) {
   //   estimateTranslation(cloud_prev, &result);
