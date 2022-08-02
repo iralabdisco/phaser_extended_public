@@ -37,7 +37,7 @@ void GridUtils::getNeighbors(
       }
     }
   }
-  VLOG(3) << "Found " << neighbors_indexes->size() << " neighbors";
+  VLOG(4) << "Found " << neighbors_indexes->size() << " neighbors";
   return;
 }
 

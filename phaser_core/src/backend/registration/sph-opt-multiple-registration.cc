@@ -126,7 +126,6 @@ SphOptMultipleRegistration::estimateMultipleRotation(
 model::RegistrationResult SphOptMultipleRegistration::estimateRotation(
     model::PointCloudPtr cloud_prev, model::PointCloudPtr cloud_cur,
     std::vector<double> corr, int32_t index) {
-  // TODO(fdila)
 
   BinghamNeighborsPeakBasedEval* rot_eval =
       dynamic_cast<BinghamNeighborsPeakBasedEval*>(
@@ -142,10 +141,12 @@ model::RegistrationResult SphOptMultipleRegistration::estimateRotation(
 
   VLOG(2) << "Bingham q: " << rot->getEstimate().transpose();
   VLOG(2) << "Bingham rotation: " << b_est.transpose();
-  common::RotationUtils::RotateAroundXYZ(
-      cloud_cur, b_est(0), b_est(1), b_est(2));
 
-  model::RegistrationResult result(std::move(*cloud_cur));
+  model::PointCloud cloud_copy = cloud_cur->clone();
+  common::RotationUtils::RotateAroundXYZ(
+      &cloud_copy, b_est(0), b_est(1), b_est(2));
+
+  model::RegistrationResult result(std::move(cloud_copy));
   result.setRotUncertaintyEstimate(rot);
   result.setRotationCorrelation(corr);
 
