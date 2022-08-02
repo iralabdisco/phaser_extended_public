@@ -78,6 +78,13 @@ SphOptMultipleRegistration::registerPointCloud(
     file.flush();
     file.close();
     LOG(INFO) << "Dumped rotation peaks to file";
+
+    file.open("rotation_peaks_max.csv");
+    std::copy(
+        max_rot_peaks.begin(), max_rot_peaks.end(),
+        std::ostream_iterator<uint32_t>(file, "\n"));
+    file.flush();
+    file.close();
   }
 
   std::vector<model::RegistrationResult> results;
