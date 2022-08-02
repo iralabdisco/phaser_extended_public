@@ -24,4 +24,5 @@ rosrun phaser_core phaser_core_driver \
   --phaser_pre_enable_geometric_cloud_segmentation=false \
   --visualize_correlation=false \
   --dump_correlation_to_file=true \
+  --dump_peaks_to_file=true \
   $REST

@@ -1,5 +1,9 @@
 #include "phaser/backend/registration/sph-opt-multiple-registration.h"
 
+#include <fstream>
+#include <glog/logging.h>
+#include <iterator>
+
 #include "phaser/backend/alignment/phase-aligner.h"
 #include "phaser/backend/correlation/spherical-combined-worker.h"
 #include "phaser/backend/correlation/spherical-intensity-worker.h"
@@ -41,10 +45,33 @@ SphOptMultipleRegistration::registerPointCloud(
       correlatePointcloud(cloud_prev, cloud_cur);
   SphericalCorrelation& corr = correlations[0];
 
+  if (FLAGS_dump_correlation_to_file) {
+    const std::vector<double> corr_vector = corr.getCorrelation();
+    std::ofstream file;
+    file.open("rotation_correlation.csv");
+    std::copy(
+        corr_vector.begin(), corr_vector.end(),
+        std::ostream_iterator<double>(file, "\n"));
+    file.flush();
+    file.close();
+    LOG(INFO) << "Dumped rotation correlation to file";
+  }
+
   NeighborsPeakExtraction rot_peak_extractor(
       bandwidth_ * 2, FLAGS_bingham_peak_neighbors_radius);
   std::set<uint32_t> rot_peaks;
   rot_peak_extractor.extractPeaks(corr.getCorrelation(), &rot_peaks);
+
+  if (FLAGS_dump_peaks_to_file) {
+    std::ofstream file;
+    file.open("rotation_peaks.csv");
+    std::copy(
+        rot_peaks.begin(), rot_peaks.end(),
+        std::ostream_iterator<double>(file, "\n"));
+    file.flush();
+    file.close();
+    LOG(INFO) << "Dumped rotation peaks to file";
+  }
 
   std::vector<model::RegistrationResult> results;
   // std::vector<model::RegistrationResult> results = estimateMultipleRotation(

@@ -28,6 +28,10 @@ DECLARE_int32(bingham_peak_neighbors_radius);
 DECLARE_int32(max_peaks_number);
 DECLARE_double(peaks_discard_threshold);
 
+// Utils
+DECLARE_bool(dump_correlation_to_file);
+DECLARE_bool(dump_peaks_to_file);
+
 }  // namespace phaser_core
 
 #endif  // PHASER_COMMON_CORE_GFLAGS_H_

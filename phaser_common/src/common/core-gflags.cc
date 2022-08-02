@@ -55,4 +55,11 @@ DEFINE_double(
     peaks_discard_threshold, 0.5,
     "Do not evaluate peaks that are under threshold*maximum correlation.");
 
+// Utils
+DEFINE_bool(
+    dump_correlation_to_file, false,
+    "Decide to dump the correlation to csv or not");
+DEFINE_bool(
+    dump_peaks_to_file, false, "Decide to dump the peaks to csv or not");
+
 }  // namespace phaser_core

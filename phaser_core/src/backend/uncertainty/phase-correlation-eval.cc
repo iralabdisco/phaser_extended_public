@@ -4,9 +4,7 @@
 #include <glog/logging.h>
 #include <iterator>
 
-DEFINE_bool(
-    dump_correlation_to_file, false,
-    "Decide to dump the correlation to csv or not");
+#include "phaser/common/core-gflags.h"
 
 namespace phaser_core {
 
