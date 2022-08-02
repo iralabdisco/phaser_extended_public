@@ -74,7 +74,7 @@ SphOptMultipleRegistration::registerPointCloud(
     file.open("rotation_peaks.csv");
     std::copy(
         rot_peaks.begin(), rot_peaks.end(),
-        std::ostream_iterator<double>(file, "\n"));
+        std::ostream_iterator<uint32_t>(file, "\n"));
     file.flush();
     file.close();
     LOG(INFO) << "Dumped rotation peaks to file";
@@ -84,9 +84,9 @@ SphOptMultipleRegistration::registerPointCloud(
   results = estimateMultipleRotation(
       cloud_prev, cloud_cur, corr.getCorrelation(), max_rot_peaks);
 
-  // for (auto result : results) {
-  //   estimateTranslation(cloud_prev, &result);
-  // }
+  for (auto result : results) {
+    estimateTranslation(cloud_prev, &result);
+  }
 
   return results;
 }
