@@ -28,6 +28,9 @@ class SphOptMultipleRegistration : public BaseRegistration {
   void getStatistics(common::StatisticsManager* manager) const
       noexcept override;
 
+  void normalizeCorrelationVector(
+      const std::vector<double>& corr, std::vector<double>* n_corr_ds);
+
   std::vector<model::RegistrationResult> estimateMultipleRotation(
       model::PointCloudPtr cloud_prev, model::PointCloudPtr cloud_cur,
       std::vector<double> corr, std::set<uint32_t> peaks);

@@ -40,7 +40,6 @@ void NeighborsPeakExtraction::extractPeaks(
   peaks->clear();
 
   for (int32_t i = 0; i < corr_size; i++) {
-    // TODO(fdila) add max to threshold
     if (corr.at(i) > peaks_discard_threshold_) {
       common::GridUtils::getNeighbors(
           i, grid_size_, neighbors_radius_, &neighbors);

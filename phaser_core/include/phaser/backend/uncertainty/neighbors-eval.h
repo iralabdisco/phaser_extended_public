@@ -33,7 +33,6 @@ class NeighborsEval : public BaseEval {
 
   NeighborsPeakExtraction& getPeakExtraction();
 
- private:
   void normalizeCorrelationVector(
       const std::vector<double>& corr, std::vector<double>* n_corr_ds);
 

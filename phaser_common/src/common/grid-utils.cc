@@ -15,15 +15,15 @@ void GridUtils::getNeighbors(
 
   grid_indexes_t grid_indexes = ind2sub(index, grid_size);
 
-  for (int i = -neighbors_radius; i < neighbors_radius; i++) {
+  for (int i = -neighbors_radius; i <= neighbors_radius; i++) {
     index_x = grid_indexes.x + i;
     if (index_x < 0 || index_x > grid_size - 1)
       continue;
-    for (int j = -neighbors_radius; j < neighbors_radius; j++) {
+    for (int j = -neighbors_radius; j <= neighbors_radius; j++) {
       index_y = grid_indexes.y + j;
       if (index_y < 0 || index_y > grid_size - 1)
         continue;
-      for (int k = -neighbors_radius; k < neighbors_radius; k++) {
+      for (int k = -neighbors_radius; k <= neighbors_radius; k++) {
         index_z = grid_indexes.z + k;
         if (index_z < 0 || index_z > grid_size - 1)
           continue;
@@ -37,6 +37,7 @@ void GridUtils::getNeighbors(
       }
     }
   }
+  VLOG(3) << "Found " << neighbors_indexes->size() << " neighbors";
   return;
 }
 

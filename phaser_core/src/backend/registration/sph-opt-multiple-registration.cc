@@ -57,10 +57,14 @@ SphOptMultipleRegistration::registerPointCloud(
     LOG(INFO) << "Dumped rotation correlation to file";
   }
 
+  std::vector<double> corr_norm;
+  normalizeCorrelationVector(corr.getCorrelation(), &corr_norm);
+
   NeighborsPeakExtraction rot_peak_extractor(
       bandwidth_ * 2, FLAGS_bingham_peak_neighbors_radius);
   std::set<uint32_t> rot_peaks;
-  rot_peak_extractor.extractPeaks(corr.getCorrelation(), &rot_peaks);
+
+  rot_peak_extractor.extractPeaks(corr_norm, &rot_peaks);
 
   if (FLAGS_dump_peaks_to_file) {
     std::ofstream file;
@@ -82,6 +86,23 @@ SphOptMultipleRegistration::registerPointCloud(
   // }
 
   return results;
+}
+
+void SphOptMultipleRegistration::normalizeCorrelationVector(
+    const std::vector<double>& corr, std::vector<double>* n_corr_ds) {
+  n_corr_ds->clear();
+
+  // Normalize correlation.
+  auto max = std::max_element(corr.cbegin(), corr.cend());
+  CHECK(max != corr.cend());
+
+  std::transform(
+      corr.begin(), corr.end(), std::back_inserter(*n_corr_ds),
+      [&](const double val) { return val / *max; });
+
+  VLOG(1) << "max is at: " << *max;
+
+  return;
 }
 
 std::vector<model::RegistrationResult>
