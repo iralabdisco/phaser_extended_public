@@ -208,7 +208,8 @@ SphOptMultipleRegistration::estimateMultipleTranslation(
       file.close();
       LOG(INFO) << "Dumped translation peaks to file";
 
-      file.open("translation_peaks_max.csv");
+      file.open(
+          "translation_peaks_max" + std::to_string(n_correlations) + ".csv");
       std::copy(
           max_transl_peaks.begin(), max_transl_peaks.end(),
           std::ostream_iterator<uint32_t>(file, "\n"));
