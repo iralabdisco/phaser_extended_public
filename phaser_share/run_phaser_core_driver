@@ -14,7 +14,7 @@ rosrun phaser_core phaser_core_driver \
   --phaser_core_spherical_low_pass_lower_bound=000 \
   --phaser_core_spherical_low_pass_upper_bound=1000 \
   --phaser_core_spherical_zero_padding=0 \
-  --phaser_core_spatial_n_voxels=25 \
+  --phaser_core_spatial_n_voxels=10 \
   --phaser_core_spatial_discretize_lower=-50 \
   --phaser_core_spatial_discretize_upper=50 \
   --phaser_core_spatial_low_pass_lower_bound=0 \
@@ -22,8 +22,9 @@ rosrun phaser_core phaser_core_driver \
   --phaser_core_spatial_zero_padding=0 \
   --gaussian_peak_neighbors=4 \
   --bingham_peak_neighbors_radius=3\
+  --gaussian_peak_neighbors_radius=2\
   --max_peaks_number=5 \
-  --peaks_discard_threshold=0.2 \
+  --peaks_discard_threshold=0.3 \
   --visualize_correlation=false \
   --dump_correlation_to_file=true \
   --dump_peaks_to_file=true \

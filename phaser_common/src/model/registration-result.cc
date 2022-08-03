@@ -98,4 +98,30 @@ const std::vector<double>& RegistrationResult::getRotationCorrelation()
   return rotation_correlation_;
 }
 
+model::RegistrationResult RegistrationResult::clone() const {
+  model::RegistrationResult cloned_result;
+
+  model::PointCloud cloned_cloud = reg_cloud_->clone();
+  cloned_result.setRegisteredCloud(
+      std::make_shared<model::PointCloud>(cloned_cloud));
+
+  cloned_result.rotation_ = rotation_;  // TODO(fdila) deep copy
+  cloned_result.found_solution_for_rotation_ = found_solution_for_rotation_;
+  cloned_result.found_solution_for_translation_ =
+      found_solution_for_translation_;
+
+  cloned_result.uncertainty_ = uncertainty_;  // TODO(fdila) deep copy
+
+  model::State cloned_state = current_state_.clone();
+  cloned_result.setRotUncertaintyEstimate(
+      cloned_state.getRotationalDistribution());
+  cloned_result.setPosUncertaintyEstimate(
+      cloned_state.getTranslationalDistribution());
+
+  cloned_result.rotation_correlation_ = rotation_correlation_;  // TODO(fdila)
+                                                                // deep copy
+
+  return cloned_result;
+}
+
 }  // namespace model

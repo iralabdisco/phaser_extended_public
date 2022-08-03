@@ -32,11 +32,10 @@ class SphOptMultipleRegistration : public BaseRegistration {
       const std::vector<double>& corr, std::vector<double>* n_corr_ds);
 
   std::vector<model::RegistrationResult> estimateMultipleRotation(
-      model::PointCloudPtr cloud_prev, model::PointCloudPtr cloud_cur,
-      std::vector<double> corr, std::set<uint32_t> peaks);
+      model::PointCloudPtr cloud_cur, std::vector<double> corr,
+      std::set<uint32_t> peaks);
   model::RegistrationResult estimateRotation(
-      model::PointCloudPtr cloud_prev, model::PointCloudPtr cloud_cur,
-      std::vector<double> corr, int32_t index);
+      model::PointCloudPtr cloud_cur, std::vector<double> corr, int32_t index);
 
   std::vector<model::RegistrationResult> estimateMultipleTranslation(
       model::PointCloudPtr cloud_prev,

@@ -42,6 +42,8 @@ class RegistrationResult {
   void setRotationCorrelation(const std::vector<double>& rot);
   const std::vector<double>& getRotationCorrelation() const noexcept;
 
+  model::RegistrationResult clone() const;
+
  private:
   model::PointCloudPtr reg_cloud_;
   std::array<double, 3> rotation_;

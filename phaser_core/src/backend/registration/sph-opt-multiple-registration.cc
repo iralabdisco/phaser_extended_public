@@ -9,7 +9,7 @@
 #include "phaser/backend/correlation/spherical-intensity-worker.h"
 #include "phaser/backend/correlation/spherical-range-worker.h"
 #include "phaser/backend/uncertainty/bingham-neighbors-peak-based-eval.h"
-#include "phaser/backend/uncertainty/gaussian-peak-based-eval.h"
+#include "phaser/backend/uncertainty/gaussian-neighbors-peak-based-eval.h"
 #include "phaser/backend/uncertainty/neighbors-peak-extraction.h"
 #include "phaser/common/core-gflags.h"
 #include "phaser/common/grid-utils.h"
@@ -23,7 +23,7 @@ SphOptMultipleRegistration::SphOptMultipleRegistration()
       bandwidth_(phaser_core::FLAGS_phaser_core_spherical_bandwidth),
       sampler_(phaser_core::FLAGS_phaser_core_spherical_bandwidth) {
   BaseEvalPtr rot_eval = std::make_unique<BinghamNeighborsPeakBasedEval>();
-  BaseEvalPtr pos_eval = std::make_unique<GaussianPeakBasedEval>();
+  BaseEvalPtr pos_eval = std::make_unique<GaussianNeighborsPeakBasedEval>();
   correlation_eval_ = std::make_unique<PhaseCorrelationEval>(
       std::move(rot_eval), std::move(pos_eval));
   CHECK_NE(fftw_init_threads(), 0);
@@ -88,8 +88,8 @@ SphOptMultipleRegistration::registerPointCloud(
   }
 
   std::vector<model::RegistrationResult> results_rotation;
-  results_rotation = estimateMultipleRotation(
-      cloud_prev, cloud_cur, corr.getCorrelation(), max_rot_peaks);
+  results_rotation =
+      estimateMultipleRotation(cloud_cur, corr.getCorrelation(), max_rot_peaks);
 
   std::vector<model::RegistrationResult> results =
       estimateMultipleTranslation(cloud_prev, &results_rotation);
@@ -116,13 +116,12 @@ void SphOptMultipleRegistration::normalizeCorrelationVector(
 
 std::vector<model::RegistrationResult>
 SphOptMultipleRegistration::estimateMultipleRotation(
-    model::PointCloudPtr cloud_prev, model::PointCloudPtr cloud_cur,
-    std::vector<double> corr, std::set<uint32_t> peaks) {
+    model::PointCloudPtr cloud_cur, std::vector<double> corr,
+    std::set<uint32_t> peaks) {
   std::vector<model::RegistrationResult> results;
 
   for (auto peak : peaks) {
-    model::RegistrationResult result =
-        estimateRotation(cloud_prev, cloud_cur, corr, peak);
+    model::RegistrationResult result = estimateRotation(cloud_cur, corr, peak);
     results.push_back(result);
   }
 
@@ -130,8 +129,7 @@ SphOptMultipleRegistration::estimateMultipleRotation(
 }
 
 model::RegistrationResult SphOptMultipleRegistration::estimateRotation(
-    model::PointCloudPtr cloud_prev, model::PointCloudPtr cloud_cur,
-    std::vector<double> corr, int32_t index) {
+    model::PointCloudPtr cloud_cur, std::vector<double> corr, int32_t index) {
   BinghamNeighborsPeakBasedEval* rot_eval =
       dynamic_cast<BinghamNeighborsPeakBasedEval*>(
           &correlation_eval_->getRotationEval());
@@ -167,6 +165,9 @@ SphOptMultipleRegistration::estimateMultipleTranslation(
 
   for (auto result : *results) {
     model::PointCloudPtr rot_cloud = result.getRegisteredCloud();
+
+    // TODO(fdila) We could separate the FFT from the correlation and reuse
+    // the FFT coefficients of the target cloud to speed up things.
     const double duration_translation_f_ms = common::executeTimedFunction(
         &phaser_core::BaseAligner::alignRegistered, &aligner_, *cloud_prev,
         f_values_, *rot_cloud, h_values_);
@@ -219,9 +220,12 @@ SphOptMultipleRegistration::estimateMultipleTranslation(
     n_correlations++;
 
     // TODO(fdila) For each peak estimate translation and uncertainty
-    // TODO(fdila) Push result into vector
+    for (auto peak : max_transl_peaks) {
+      model::RegistrationResult result_t =
+          estimateTranslation(cloud_prev, &result, corr_norm, peak);
+      results_t.push_back(result_t);
+    }
   }
-
   return results_t;
 }
 
@@ -234,17 +238,28 @@ model::RegistrationResult SphOptMultipleRegistration::estimateTranslation(
   const double duration_translation_f_ms = common::executeTimedFunction(
       &phaser_core::BaseAligner::alignRegistered, &aligner_, *cloud_prev,
       f_values_, *rot_cloud, h_values_);
-  common::BaseDistributionPtr pos =
-      correlation_eval_->calcTranslationUncertainty(aligner_);
-  Eigen::VectorXd g_est = pos->getEstimate();
+
+  GaussianNeighborsPeakBasedEval* trasl_eval =
+      dynamic_cast<GaussianNeighborsPeakBasedEval*>(
+          &correlation_eval_->getPositionEval());
+
+  common::BaseDistributionPtr trasl = trasl_eval->evaluatePeakBasedCorrelation(
+      aligner_.getNumberOfVoxels(), FLAGS_phaser_core_spatial_discretize_lower,
+      FLAGS_phaser_core_spatial_discretize_upper, corr, index);
+
+  Eigen::VectorXd g_est = trasl->getEstimate();
 
   VLOG(2) << "Gaussian translation: " << g_est.transpose();
   VLOG(2) << "Translational alignment took: " << duration_translation_f_ms
           << "ms.";
 
+  model::RegistrationResult result_t = result->clone();
+
   common::TranslationUtils::TranslateXYZ(
       rot_cloud, g_est(0), g_est(1), g_est(2));
-  result->setPosUncertaintyEstimate(pos);
+  result_t.setPosUncertaintyEstimate(trasl);
+
+  return result_t;
 }
 
 void SphOptMultipleRegistration::getStatistics(
