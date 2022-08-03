@@ -48,6 +48,11 @@ DEFINE_int32(
     "Defines the radius used to find local maxima and to fit the bibgham "
     "distribuition.");
 
+DEFINE_int32(
+    gaussian_peak_neighbors_radius, 1,
+    "Defines the radius used to find local maxima and to fit the gaussian "
+    "distribuition.");
+
 // Peak parameters
 DEFINE_int32(
     max_peaks_number, 4, "Take only the first best max_peak_number peaks.");

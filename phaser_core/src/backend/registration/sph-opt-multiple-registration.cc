@@ -87,13 +87,12 @@ SphOptMultipleRegistration::registerPointCloud(
     file.close();
   }
 
-  std::vector<model::RegistrationResult> results;
-  results = estimateMultipleRotation(
+  std::vector<model::RegistrationResult> results_rotation;
+  results_rotation = estimateMultipleRotation(
       cloud_prev, cloud_cur, corr.getCorrelation(), max_rot_peaks);
 
-  for (auto result : results) {
-    estimateTranslation(cloud_prev, &result);
-  }
+  std::vector<model::RegistrationResult> results =
+      estimateMultipleTranslation(cloud_prev, &results_rotation);
 
   return results;
 }
@@ -133,7 +132,6 @@ SphOptMultipleRegistration::estimateMultipleRotation(
 model::RegistrationResult SphOptMultipleRegistration::estimateRotation(
     model::PointCloudPtr cloud_prev, model::PointCloudPtr cloud_cur,
     std::vector<double> corr, int32_t index) {
-
   BinghamNeighborsPeakBasedEval* rot_eval =
       dynamic_cast<BinghamNeighborsPeakBasedEval*>(
           &correlation_eval_->getRotationEval());
@@ -160,8 +158,75 @@ model::RegistrationResult SphOptMultipleRegistration::estimateRotation(
   return result;
 }
 
-void SphOptMultipleRegistration::estimateTranslation(
-    model::PointCloudPtr cloud_prev, model::RegistrationResult* result) {
+std::vector<model::RegistrationResult>
+SphOptMultipleRegistration::estimateMultipleTranslation(
+    model::PointCloudPtr cloud_prev,
+    std::vector<model::RegistrationResult>* results) {
+  std::vector<model::RegistrationResult> results_t;
+  int n_correlations = 0;
+
+  for (auto result : *results) {
+    model::PointCloudPtr rot_cloud = result.getRegisteredCloud();
+    const double duration_translation_f_ms = common::executeTimedFunction(
+        &phaser_core::BaseAligner::alignRegistered, &aligner_, *cloud_prev,
+        f_values_, *rot_cloud, h_values_);
+    phaser_core::SampledSignal corr_signal = aligner_.getCorrelation();
+
+    std::vector<double> corr_norm;
+    normalizeCorrelationVector(corr_signal, &corr_norm);
+
+    // TODO(fdila) Verify number of voxels/grid size.
+    NeighborsPeakExtraction transl_peak_extractor(
+        aligner_.getNumberOfVoxels(), FLAGS_gaussian_peak_neighbors_radius);
+    std::set<uint32_t> transl_peaks;
+
+    transl_peak_extractor.extractPeaks(corr_norm, &transl_peaks);
+
+    std::set<uint32_t> max_transl_peaks;
+    transl_peak_extractor.getMaxPeaks(
+        &transl_peaks, &corr_norm, &max_transl_peaks);
+
+    if (FLAGS_dump_correlation_to_file) {
+      std::ofstream file;
+      file.open(
+          "translation_correlation" + std::to_string(n_correlations) + ".csv");
+      std::copy(
+          corr_signal.begin(), corr_signal.end(),
+          std::ostream_iterator<double>(file, "\n"));
+      file.flush();
+      file.close();
+      LOG(INFO) << "Dumped translation correlation to file";
+    }
+
+    if (FLAGS_dump_peaks_to_file) {
+      std::ofstream file;
+      file.open("translation_peaks" + std::to_string(n_correlations) + ".csv");
+      std::copy(
+          transl_peaks.begin(), transl_peaks.end(),
+          std::ostream_iterator<uint32_t>(file, "\n"));
+      file.flush();
+      file.close();
+      LOG(INFO) << "Dumped translation peaks to file";
+
+      file.open("translation_peaks_max.csv");
+      std::copy(
+          max_transl_peaks.begin(), max_transl_peaks.end(),
+          std::ostream_iterator<uint32_t>(file, "\n"));
+      file.flush();
+      file.close();
+    }
+    n_correlations++;
+
+    // TODO(fdila) For each peak estimate translation and uncertainty
+    // TODO(fdila) Push result into vector
+  }
+
+  return results_t;
+}
+
+model::RegistrationResult SphOptMultipleRegistration::estimateTranslation(
+    model::PointCloudPtr cloud_prev, model::RegistrationResult* result,
+    std::vector<double> corr, int32_t index) {
   VLOG(1) << "[SphOptRegistration] Estimating translation...";
 
   model::PointCloudPtr rot_cloud = result->getRegisteredCloud();

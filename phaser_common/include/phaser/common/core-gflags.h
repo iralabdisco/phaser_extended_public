@@ -23,6 +23,7 @@ DECLARE_int32(phaser_core_spatial_low_pass_upper_bound);
 // Distribution fitting parameters
 DECLARE_int32(bingham_peak_neighbors);
 DECLARE_int32(bingham_peak_neighbors_radius);
+DECLARE_int32(gaussian_peak_neighbors_radius);
 
 // Peak parameters
 DECLARE_int32(max_peaks_number);
