@@ -105,21 +105,16 @@ model::RegistrationResult RegistrationResult::clone() const {
   cloned_result.setRegisteredCloud(
       std::make_shared<model::PointCloud>(cloned_cloud));
 
-  cloned_result.rotation_ = rotation_;  // TODO(fdila) deep copy
+  cloned_result.rotation_ = rotation_;
+  cloned_result.translation_ = translation_;
+
   cloned_result.found_solution_for_rotation_ = found_solution_for_rotation_;
   cloned_result.found_solution_for_translation_ =
       found_solution_for_translation_;
 
-  cloned_result.uncertainty_ = uncertainty_;  // TODO(fdila) deep copy
-
-  model::State cloned_state = current_state_.clone();
-  cloned_result.setRotUncertaintyEstimate(
-      cloned_state.getRotationalDistribution());
-  cloned_result.setPosUncertaintyEstimate(
-      cloned_state.getTranslationalDistribution());
-
-  cloned_result.rotation_correlation_ = rotation_correlation_;  // TODO(fdila)
-                                                                // deep copy
+  cloned_result.uncertainty_ = uncertainty_;
+  cloned_result.current_state_ = current_state_;
+  cloned_result.rotation_correlation_ = rotation_correlation_;
 
   return cloned_result;
 }

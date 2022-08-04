@@ -254,9 +254,9 @@ model::RegistrationResult SphOptMultipleRegistration::estimateTranslation(
           << "ms.";
 
   model::RegistrationResult result_t = result->clone();
-
   common::TranslationUtils::TranslateXYZ(
-      rot_cloud, g_est(0), g_est(1), g_est(2));
+      result_t.getRegisteredCloud(), g_est(0), g_est(1), g_est(2));
+
   result_t.setPosUncertaintyEstimate(trasl);
 
   return result_t;

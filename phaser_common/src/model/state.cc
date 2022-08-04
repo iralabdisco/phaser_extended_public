@@ -35,15 +35,4 @@ common::BaseDistributionPtr State::getTranslationalDistribution() const {
   return trans_distribution_;
 }
 
-model::State State::clone() const {
-  common::BaseDistributionPtr new_rot;
-  *new_rot = *rot_distribution_;
-  common::BaseDistributionPtr new_trans;
-  *new_trans = *trans_distribution_;
-  State cloned_state;
-  cloned_state.setRotationalDistribution(new_rot);
-  cloned_state.setTranslationalDistribution(new_trans);
-  return cloned_state;
-}
-
 }  // namespace model

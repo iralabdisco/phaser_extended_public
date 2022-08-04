@@ -19,8 +19,6 @@ class State {
   common::BaseDistributionPtr getRotationalDistribution() const;
   common::BaseDistributionPtr getTranslationalDistribution() const;
 
-  model::State clone() const;
-
  private:
   common::BaseDistributionPtr rot_distribution_ = nullptr;
   common::BaseDistributionPtr trans_distribution_ = nullptr;
