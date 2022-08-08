@@ -66,5 +66,8 @@ DEFINE_bool(
     "Decide to dump the correlation to csv or not");
 DEFINE_bool(
     dump_peaks_to_file, false, "Decide to dump the peaks to csv or not");
+DEFINE_string(
+    result_folder, "",
+    "Defines the folder where the results should be dumped.");
 
 }  // namespace phaser_core

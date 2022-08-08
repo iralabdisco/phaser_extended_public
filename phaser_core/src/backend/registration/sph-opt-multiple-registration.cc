@@ -48,7 +48,7 @@ SphOptMultipleRegistration::registerPointCloud(
   if (FLAGS_dump_correlation_to_file) {
     const std::vector<double> corr_vector = corr.getCorrelation();
     std::ofstream file;
-    file.open("rotation_correlation.csv");
+    file.open(FLAGS_result_folder + "rotation_correlation.csv");
     std::copy(
         corr_vector.begin(), corr_vector.end(),
         std::ostream_iterator<double>(file, "\n"));
@@ -71,7 +71,7 @@ SphOptMultipleRegistration::registerPointCloud(
 
   if (FLAGS_dump_peaks_to_file) {
     std::ofstream file;
-    file.open("rotation_peaks.csv");
+    file.open(FLAGS_result_folder + "rotation_peaks.csv");
     std::copy(
         rot_peaks.begin(), rot_peaks.end(),
         std::ostream_iterator<uint32_t>(file, "\n"));
@@ -79,7 +79,7 @@ SphOptMultipleRegistration::registerPointCloud(
     file.close();
     LOG(INFO) << "Dumped rotation peaks to file";
 
-    file.open("rotation_peaks_max.csv");
+    file.open(FLAGS_result_folder + "rotation_peaks_max.csv");
     std::copy(
         max_rot_peaks.begin(), max_rot_peaks.end(),
         std::ostream_iterator<uint32_t>(file, "\n"));
@@ -190,7 +190,8 @@ SphOptMultipleRegistration::estimateMultipleTranslation(
     if (FLAGS_dump_correlation_to_file) {
       std::ofstream file;
       file.open(
-          "translation_correlation" + std::to_string(n_correlations) + ".csv");
+          FLAGS_result_folder + "translation_correlation" +
+          std::to_string(n_correlations) + ".csv");
       std::copy(
           corr_signal.begin(), corr_signal.end(),
           std::ostream_iterator<double>(file, "\n"));
@@ -201,7 +202,9 @@ SphOptMultipleRegistration::estimateMultipleTranslation(
 
     if (FLAGS_dump_peaks_to_file) {
       std::ofstream file;
-      file.open("translation_peaks" + std::to_string(n_correlations) + ".csv");
+      file.open(
+          FLAGS_result_folder + "translation_peaks" +
+          std::to_string(n_correlations) + ".csv");
       std::copy(
           transl_peaks.begin(), transl_peaks.end(),
           std::ostream_iterator<uint32_t>(file, "\n"));
@@ -210,7 +213,8 @@ SphOptMultipleRegistration::estimateMultipleTranslation(
       LOG(INFO) << "Dumped translation peaks to file";
 
       file.open(
-          "translation_peaks_max" + std::to_string(n_correlations) + ".csv");
+          FLAGS_result_folder + "translation_peaks_max" +
+          std::to_string(n_correlations) + ".csv");
       std::copy(
           max_transl_peaks.begin(), max_transl_peaks.end(),
           std::ostream_iterator<uint32_t>(file, "\n"));
@@ -219,7 +223,6 @@ SphOptMultipleRegistration::estimateMultipleTranslation(
     }
     n_correlations++;
 
-    // TODO(fdila) For each peak estimate translation and uncertainty
     for (auto peak : max_transl_peaks) {
       model::RegistrationResult result_t =
           estimateTranslation(cloud_prev, &result, corr_norm, peak);
