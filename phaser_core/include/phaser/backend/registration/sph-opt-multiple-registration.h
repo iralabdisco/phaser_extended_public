@@ -28,9 +28,6 @@ class SphOptMultipleRegistration : public BaseRegistration {
   void getStatistics(common::StatisticsManager* manager) const
       noexcept override;
 
-  void normalizeCorrelationVector(
-      const std::vector<double>& corr, std::vector<double>* n_corr_ds);
-
   std::vector<model::RegistrationResult> estimateMultipleRotation(
       model::PointCloudPtr cloud_cur, std::vector<double> corr,
       std::set<uint32_t> peaks);
@@ -41,8 +38,8 @@ class SphOptMultipleRegistration : public BaseRegistration {
       model::PointCloudPtr cloud_prev,
       std::vector<model::RegistrationResult>* results);
   model::RegistrationResult estimateTranslation(
-      model::PointCloudPtr cloud_prev, model::RegistrationResult* result,
-      std::vector<double> corr, int32_t index);
+      model::RegistrationResult* result, std::vector<double> corr,
+      int32_t index);
 
   void setBandwith(const int bandwith);
 

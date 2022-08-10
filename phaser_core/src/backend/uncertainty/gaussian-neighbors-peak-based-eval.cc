@@ -29,16 +29,9 @@ common::Gaussian GaussianNeighborsPeakBasedEval::fitGaussianDistribution(
   Eigen::ArrayXXd samples;
   Eigen::VectorXd weights;
 
-  std::vector<double> corr_workaound;
-  // TODO(fdila) Verify workaround for negative correlation scores.
-  // This is remapping the correlation from [-1, 1] to [0, 1].
-  for (int i = 0; i < norm_corr.size(); i++) {
-    corr_workaound.push_back((norm_corr[i] + 1) / 2);
-  }
-
   retrievePeakNeighbors(
       n_voxels, discretize_lower_bound, discretize_upper_bound, index,
-      corr_workaound, &samples, &weights);
+      norm_corr, &samples, &weights);
 
   VLOG(1) << "samples:\n" << samples;
   VLOG(1) << "b_weights: " << weights.transpose();

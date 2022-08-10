@@ -47,30 +47,27 @@ SphOptMultipleRegistration::registerPointCloud(
     std::vector<SphericalCorrelation> correlations =
         correlatePointcloud(cloud_prev, cloud_cur);
     SphericalCorrelation& corr = correlations[0];
+    std::vector<double> corr_rotation = corr.getCorrelation();
 
     if (FLAGS_dump_correlation_to_file) {
-      const std::vector<double> corr_vector = corr.getCorrelation();
       std::ofstream file;
       file.open(FLAGS_result_folder + "rotation_correlation.csv");
       std::copy(
-          corr_vector.begin(), corr_vector.end(),
+          corr_rotation.begin(), corr_rotation.end(),
           std::ostream_iterator<double>(file, "\n"));
       file.flush();
       file.close();
       LOG(INFO) << "Dumped rotation correlation to file";
     }
 
-    std::vector<double> corr_norm;
-    normalizeCorrelationVector(corr.getCorrelation(), &corr_norm);
-
     NeighborsPeakExtraction rot_peak_extractor(
         bandwidth_ * 2, FLAGS_bingham_peak_neighbors_radius);
     std::set<uint32_t> rot_peaks;
 
-    rot_peak_extractor.extractPeaks(corr_norm, &rot_peaks);
+    rot_peak_extractor.extractPeaks(corr_rotation, &rot_peaks);
 
     std::set<uint32_t> max_rot_peaks;
-    rot_peak_extractor.getMaxPeaks(&rot_peaks, &corr_norm, &max_rot_peaks);
+    rot_peak_extractor.getMaxPeaks(&rot_peaks, &corr_rotation, &max_rot_peaks);
 
     if (FLAGS_dump_peaks_to_file) {
       std::ofstream file;
@@ -90,8 +87,8 @@ SphOptMultipleRegistration::registerPointCloud(
       file.close();
     }
 
-    results_rotation = estimateMultipleRotation(
-        cloud_cur, corr.getCorrelation(), max_rot_peaks);
+    results_rotation =
+        estimateMultipleRotation(cloud_cur, corr_rotation, max_rot_peaks);
   } else {
     model::RegistrationResult result(std::move(cloud_cur));
     results_rotation.push_back(result);
@@ -105,23 +102,6 @@ SphOptMultipleRegistration::registerPointCloud(
   }
 
   return final_results;
-}
-
-void SphOptMultipleRegistration::normalizeCorrelationVector(
-    const std::vector<double>& corr, std::vector<double>* n_corr_ds) {
-  n_corr_ds->clear();
-
-  // Normalize correlation.
-  auto max = std::max_element(corr.cbegin(), corr.cend());
-  CHECK(max != corr.cend());
-
-  std::transform(
-      corr.begin(), corr.end(), std::back_inserter(*n_corr_ds),
-      [&](const double val) { return val / *max; });
-
-  VLOG(1) << "max is at: " << *max;
-
-  return;
 }
 
 std::vector<model::RegistrationResult>
@@ -181,21 +161,22 @@ SphOptMultipleRegistration::estimateMultipleTranslation(
     const double duration_translation_f_ms = common::executeTimedFunction(
         &phaser_core::BaseAligner::alignRegistered, &aligner_, *cloud_prev,
         f_values_, *rot_cloud, h_values_);
-    phaser_core::SampledSignal corr_signal = aligner_.getCorrelation();
 
-    std::vector<double> corr_norm;
-    normalizeCorrelationVector(corr_signal, &corr_norm);
+    VLOG(1) << "Spatial correlation took : " << duration_translation_f_ms
+            << " ms";
+
+    phaser_core::SampledSignal corr_signal = aligner_.getCorrelation();
 
     // TODO(fdila) Verify number of voxels/grid size.
     NeighborsPeakExtraction transl_peak_extractor(
         aligner_.getNumberOfVoxels(), FLAGS_gaussian_peak_neighbors_radius);
     std::set<uint32_t> transl_peaks;
 
-    transl_peak_extractor.extractPeaks(corr_norm, &transl_peaks);
+    transl_peak_extractor.extractPeaks(corr_signal, &transl_peaks);
 
     std::set<uint32_t> max_transl_peaks;
     transl_peak_extractor.getMaxPeaks(
-        &transl_peaks, &corr_norm, &max_transl_peaks);
+        &transl_peaks, &corr_signal, &max_transl_peaks);
 
     if (FLAGS_dump_correlation_to_file) {
       std::ofstream file;
@@ -235,7 +216,7 @@ SphOptMultipleRegistration::estimateMultipleTranslation(
 
     for (auto peak : max_transl_peaks) {
       model::RegistrationResult result_t =
-          estimateTranslation(cloud_prev, &result, corr_norm, peak);
+          estimateTranslation(&result, corr_signal, peak);
       results_t.push_back(result_t);
     }
   }
@@ -243,14 +224,11 @@ SphOptMultipleRegistration::estimateMultipleTranslation(
 }
 
 model::RegistrationResult SphOptMultipleRegistration::estimateTranslation(
-    model::PointCloudPtr cloud_prev, model::RegistrationResult* result,
-    std::vector<double> corr, int32_t index) {
+    model::RegistrationResult* result, std::vector<double> corr,
+    int32_t index) {
   VLOG(1) << "[SphOptRegistration] Estimating translation...";
 
   model::PointCloudPtr rot_cloud = result->getRegisteredCloud();
-  const double duration_translation_f_ms = common::executeTimedFunction(
-      &phaser_core::BaseAligner::alignRegistered, &aligner_, *cloud_prev,
-      f_values_, *rot_cloud, h_values_);
 
   GaussianNeighborsPeakBasedEval* trasl_eval =
       dynamic_cast<GaussianNeighborsPeakBasedEval*>(
@@ -263,8 +241,8 @@ model::RegistrationResult SphOptMultipleRegistration::estimateTranslation(
   Eigen::VectorXd g_est = trasl->getEstimate();
 
   VLOG(2) << "Gaussian translation: " << g_est.transpose();
-  VLOG(2) << "Translational alignment took: " << duration_translation_f_ms
-          << "ms.";
+  // VLOG(2) << "Translational alignment took: " << duration_translation_f_ms
+  //         << "ms.";
 
   model::RegistrationResult result_t = result->clone();
   common::TranslationUtils::TranslateXYZ(

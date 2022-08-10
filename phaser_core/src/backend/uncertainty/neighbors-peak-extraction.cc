@@ -32,17 +32,20 @@ void NeighborsPeakExtraction::extractPeaks(
     const std::vector<double>& corr, std::set<uint32_t>* peaks) {
   VLOG(1) << "Extracting peaks...";
 
-  int32_t corr_size = corr.size();
-  VLOG(1) << "Correlation size: " << corr_size;
-  VLOG(1) << "Using grid size: " << grid_size_;
-
   std::vector<int32_t> neighbors;
   bool is_max = true;
 
   peaks->clear();
 
+  auto max = std::max_element(corr.cbegin(), corr.cend());
+  CHECK(max != corr.cend());
+
+  double discard_threshold = *max * peaks_discard_threshold_;
+
+  int32_t corr_size = corr.size();
+
   for (int32_t i = 0; i < corr_size; i++) {
-    if (corr.at(i) > peaks_discard_threshold_) {
+    if (corr.at(i) > discard_threshold) {
       common::GridUtils::getNeighbors(
           i, grid_size_, neighbors_radius_, &neighbors);
       for (auto neighbor : neighbors) {
@@ -63,7 +66,7 @@ void NeighborsPeakExtraction::extractPeaks(
 }
 
 void NeighborsPeakExtraction::getMaxPeaks(
-    const std::set<uint32_t>* peaks, const std::vector<double>* norm_corr,
+    const std::set<uint32_t>* peaks, const std::vector<double>* corr,
     std::set<uint32_t>* max_peaks) {
   std::vector<std::pair<int32_t, double>> peaks_with_idx;
 
@@ -74,7 +77,7 @@ void NeighborsPeakExtraction::getMaxPeaks(
   }
 
   for (auto peak : *peaks) {
-    peaks_with_idx.push_back(std::make_pair(peak, norm_corr->at(peak)));
+    peaks_with_idx.push_back(std::make_pair(peak, corr->at(peak)));
   }
 
   // sort descending based on the correlation
