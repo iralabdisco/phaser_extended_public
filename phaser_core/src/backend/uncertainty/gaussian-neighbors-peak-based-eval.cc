@@ -33,9 +33,6 @@ common::Gaussian GaussianNeighborsPeakBasedEval::fitGaussianDistribution(
       n_voxels, discretize_lower_bound, discretize_upper_bound, index,
       norm_corr, &samples, &weights);
 
-  VLOG(1) << "samples:\n" << samples;
-  VLOG(1) << "b_weights: " << weights.transpose();
-
   // Calculate mean and covariance.
   return common::Gaussian(samples, weights);
 }
@@ -77,6 +74,15 @@ void GaussianNeighborsPeakBasedEval::retrievePeakNeighbors(
     (*weights)(k) = norm_corr.at(neighbor_index);
     ++k;
   }
+
+  // TODO(fdila) all weights need to be > 0, don't know if this is a good
+  // workaround
+  for (uint32_t i = 0; i < neighbors_indexes.size(); ++i) {
+    if ((*weights)(i) < 0) {
+      (*weights)(i) = 0;
+    }
+  }
+
   const double weight_sum = weights->array().sum();
   CHECK_GT(weight_sum, 0);
   (*weights) = weights->array() / weight_sum;

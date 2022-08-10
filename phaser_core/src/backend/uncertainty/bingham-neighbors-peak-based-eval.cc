@@ -64,6 +64,15 @@ void BinghamNeighborsPeakBasedEval::retrievePeakNeighbors(
   if (k == 1) {
     return;
   }
+
+  // TODO(fdila) all weights need to be > 0, don't know if this is a good
+  // workaround
+  for (int i = 0; i < neighbors_indexes.size(); ++i) {
+    if ((*weights)(i) < 0) {
+      (*weights)(i) = 0;
+    }
+  }
+
   const double weight_sum = weights->array().sum();
   CHECK_GT(weight_sum, 0);
   (*weights) = weights->array() / weight_sum;
