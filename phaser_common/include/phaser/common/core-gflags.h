@@ -33,7 +33,8 @@ DECLARE_double(peaks_discard_threshold);
 DECLARE_bool(dump_correlation_to_file);
 DECLARE_bool(dump_peaks_to_file);
 DECLARE_string(result_folder);
-
+DECLARE_bool(estimate_rotation);
+DECLARE_bool(estimate_translation);
 }  // namespace phaser_core
 
 #endif  // PHASER_COMMON_CORE_GFLAGS_H_

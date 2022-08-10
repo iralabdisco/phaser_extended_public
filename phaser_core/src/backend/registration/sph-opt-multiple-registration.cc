@@ -41,60 +41,70 @@ SphOptMultipleRegistration::registerPointCloud(
   VLOG(1) << "Cloud2: " << cloud_cur->getPlyReadDirectory();
   cloud_prev->initialize_kd_tree();
 
-  std::vector<SphericalCorrelation> correlations =
-      correlatePointcloud(cloud_prev, cloud_cur);
-  SphericalCorrelation& corr = correlations[0];
-
-  if (FLAGS_dump_correlation_to_file) {
-    const std::vector<double> corr_vector = corr.getCorrelation();
-    std::ofstream file;
-    file.open(FLAGS_result_folder + "rotation_correlation.csv");
-    std::copy(
-        corr_vector.begin(), corr_vector.end(),
-        std::ostream_iterator<double>(file, "\n"));
-    file.flush();
-    file.close();
-    LOG(INFO) << "Dumped rotation correlation to file";
-  }
-
-  std::vector<double> corr_norm;
-  normalizeCorrelationVector(corr.getCorrelation(), &corr_norm);
-
-  NeighborsPeakExtraction rot_peak_extractor(
-      bandwidth_ * 2, FLAGS_bingham_peak_neighbors_radius);
-  std::set<uint32_t> rot_peaks;
-
-  rot_peak_extractor.extractPeaks(corr_norm, &rot_peaks);
-
-  std::set<uint32_t> max_rot_peaks;
-  rot_peak_extractor.getMaxPeaks(&rot_peaks, &corr_norm, &max_rot_peaks);
-
-  if (FLAGS_dump_peaks_to_file) {
-    std::ofstream file;
-    file.open(FLAGS_result_folder + "rotation_peaks.csv");
-    std::copy(
-        rot_peaks.begin(), rot_peaks.end(),
-        std::ostream_iterator<uint32_t>(file, "\n"));
-    file.flush();
-    file.close();
-    LOG(INFO) << "Dumped rotation peaks to file";
-
-    file.open(FLAGS_result_folder + "rotation_peaks_max.csv");
-    std::copy(
-        max_rot_peaks.begin(), max_rot_peaks.end(),
-        std::ostream_iterator<uint32_t>(file, "\n"));
-    file.flush();
-    file.close();
-  }
-
   std::vector<model::RegistrationResult> results_rotation;
-  results_rotation =
-      estimateMultipleRotation(cloud_cur, corr.getCorrelation(), max_rot_peaks);
 
-  std::vector<model::RegistrationResult> results =
-      estimateMultipleTranslation(cloud_prev, &results_rotation);
+  if (FLAGS_estimate_rotation) {
+    std::vector<SphericalCorrelation> correlations =
+        correlatePointcloud(cloud_prev, cloud_cur);
+    SphericalCorrelation& corr = correlations[0];
 
-  return results;
+    if (FLAGS_dump_correlation_to_file) {
+      const std::vector<double> corr_vector = corr.getCorrelation();
+      std::ofstream file;
+      file.open(FLAGS_result_folder + "rotation_correlation.csv");
+      std::copy(
+          corr_vector.begin(), corr_vector.end(),
+          std::ostream_iterator<double>(file, "\n"));
+      file.flush();
+      file.close();
+      LOG(INFO) << "Dumped rotation correlation to file";
+    }
+
+    std::vector<double> corr_norm;
+    normalizeCorrelationVector(corr.getCorrelation(), &corr_norm);
+
+    NeighborsPeakExtraction rot_peak_extractor(
+        bandwidth_ * 2, FLAGS_bingham_peak_neighbors_radius);
+    std::set<uint32_t> rot_peaks;
+
+    rot_peak_extractor.extractPeaks(corr_norm, &rot_peaks);
+
+    std::set<uint32_t> max_rot_peaks;
+    rot_peak_extractor.getMaxPeaks(&rot_peaks, &corr_norm, &max_rot_peaks);
+
+    if (FLAGS_dump_peaks_to_file) {
+      std::ofstream file;
+      file.open(FLAGS_result_folder + "rotation_peaks.csv");
+      std::copy(
+          rot_peaks.begin(), rot_peaks.end(),
+          std::ostream_iterator<uint32_t>(file, "\n"));
+      file.flush();
+      file.close();
+      LOG(INFO) << "Dumped rotation peaks to file";
+
+      file.open(FLAGS_result_folder + "rotation_peaks_max.csv");
+      std::copy(
+          max_rot_peaks.begin(), max_rot_peaks.end(),
+          std::ostream_iterator<uint32_t>(file, "\n"));
+      file.flush();
+      file.close();
+    }
+
+    results_rotation = estimateMultipleRotation(
+        cloud_cur, corr.getCorrelation(), max_rot_peaks);
+  } else {
+    model::RegistrationResult result(std::move(cloud_cur));
+    results_rotation.push_back(result);
+  }
+
+  std::vector<model::RegistrationResult> final_results;
+  if (FLAGS_estimate_translation) {
+    final_results = estimateMultipleTranslation(cloud_prev, &results_rotation);
+  } else {
+    final_results = results_rotation;
+  }
+
+  return final_results;
 }
 
 void SphOptMultipleRegistration::normalizeCorrelationVector(

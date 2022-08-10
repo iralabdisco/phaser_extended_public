@@ -28,8 +28,6 @@ DEFINE_string(
 DEFINE_bool(refine_rot_x, true, "Perform a rotation over x.");
 DEFINE_bool(refine_rot_y, true, "Perform a rotation over y.");
 DEFINE_bool(refine_rot_z, true, "Perform a rotation over z.");
-DEFINE_bool(estimate_rotation, true, "Esttimates the rotation if true.");
-DEFINE_bool(estimate_translation, true, "Esttimates the translation if true.");
 
 namespace phaser_core {
 
