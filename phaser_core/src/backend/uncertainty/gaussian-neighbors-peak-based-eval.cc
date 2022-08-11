@@ -44,8 +44,7 @@ void GaussianNeighborsPeakBasedEval::retrievePeakNeighbors(
     Eigen::VectorXd* weights) const {
   std::vector<int32_t> neighbors_indexes;
   common::GridUtils::getNeighbors(
-      index, n_voxels, FLAGS_gaussian_peak_neighbors_radius,
-      &neighbors_indexes);
+      index, n_voxels, FLAGS_gaussian_samples_radius, &neighbors_indexes);
 
   // getNeighbors returns only the neighbors, we also need the max itself for
   // Gaussian fit

@@ -60,6 +60,16 @@ DEFINE_double(
     peaks_discard_threshold, 0.5,
     "Do not evaluate peaks that are under threshold*maximum correlation.");
 
+// Parameters for distribution fitting with neighbors.
+DEFINE_int32(
+    bingham_samples_radius, 1,
+    "Defines the radius used to take the samples for bingham distribution "
+    "fitting.");
+DEFINE_int32(
+    gaussian_samples_radius, 1,
+    "Defines the radius used to take the samples for gaussian distribution "
+    "fitting.");
+
 // Utils
 DEFINE_bool(
     dump_correlation_to_file, false,
