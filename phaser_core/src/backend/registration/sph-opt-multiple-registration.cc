@@ -60,13 +60,14 @@ SphOptMultipleRegistration::registerPointCloud(
       LOG(INFO) << "Dumped rotation correlation to file";
     }
 
+    // TODO(fdila): check padding for rotation grid
     NeighborsPeakExtraction rot_peak_extractor(
         bandwidth_ * 2, FLAGS_bingham_peak_neighbors_radius);
     std::set<uint32_t> rot_peaks;
 
     rot_peak_extractor.extractPeaks(corr_rotation, &rot_peaks);
 
-    std::set<uint32_t> max_rot_peaks;
+    std::vector<uint32_t> max_rot_peaks;
     rot_peak_extractor.getMaxPeaks(&rot_peaks, &corr_rotation, &max_rot_peaks);
 
     if (FLAGS_dump_peaks_to_file) {
@@ -107,7 +108,7 @@ SphOptMultipleRegistration::registerPointCloud(
 std::vector<model::RegistrationResult>
 SphOptMultipleRegistration::estimateMultipleRotation(
     model::PointCloudPtr cloud_cur, std::vector<double> corr,
-    std::set<uint32_t> peaks) {
+    std::vector<uint32_t> peaks) {
   std::vector<model::RegistrationResult> results;
 
   for (auto peak : peaks) {
@@ -174,7 +175,7 @@ SphOptMultipleRegistration::estimateMultipleTranslation(
 
     transl_peak_extractor.extractPeaks(corr_signal, &transl_peaks);
 
-    std::set<uint32_t> max_transl_peaks;
+    std::vector<uint32_t> max_transl_peaks;
     transl_peak_extractor.getMaxPeaks(
         &transl_peaks, &corr_signal, &max_transl_peaks);
 

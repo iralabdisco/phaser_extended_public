@@ -25,22 +25,13 @@ class NeighborsPeakExtraction : public BasePeakExtraction {
 
   void getMaxPeaks(
       const std::set<uint32_t>* peaks, const std::vector<double>* norm_corr,
-      std::set<uint32_t>* max_peaks);
+      std::vector<uint32_t>* max_peaks);
 
   int32_t getNeighborsRadius() const;
   int32_t& getNeighborsRadius();
 
   int32_t getMaxPeaksNumber() const;
   int32_t& getMaxPeaksNumber();
-
- private:
-  void getNeighbors(
-      const int32_t index, const int32_t grid_size,
-      std::vector<int32_t> neighbors_indexes) const;
-  grid_indexes_t ind2sub(const int32_t index, const int32_t grid_size) const;
-  int32_t sub2ind(
-      const int32_t i, const int32_t j, const int32_t k,
-      const int32_t grid_size) const;
 
   common::StatisticsManager manager_;
   int32_t grid_size_;
