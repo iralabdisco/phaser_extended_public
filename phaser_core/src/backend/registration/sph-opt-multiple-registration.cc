@@ -124,8 +124,8 @@ model::RegistrationResult SphOptMultipleRegistration::estimateRotation(
       dynamic_cast<BinghamNeighborsPeakBasedEval*>(
           &correlation_eval_->getRotationEval());
 
-  common::BaseDistributionPtr rot =
-      rot_eval->evaluatePeakBasedCorrelation(bandwidth_, corr, index);
+  common::BaseDistributionPtr rot = rot_eval->evaluatePeakBasedCorrelation(
+      bandwidth_ + FLAGS_phaser_core_spherical_zero_padding, corr, index);
 
   Eigen::Vector4d inv = rot->getEstimate();
   inv.block(1, 0, 3, 1) = -inv.block(1, 0, 3, 1);
