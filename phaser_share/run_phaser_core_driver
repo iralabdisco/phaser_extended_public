@@ -30,7 +30,7 @@ rosrun phaser_core phaser_core_driver \
   --phaser_core_spatial_discretize_upper=100 \
   --phaser_core_spatial_low_pass_lower_bound=0 \
   --phaser_core_spatial_low_pass_upper_bound=1000 \
-  --phaser_core_spatial_zero_padding=0 \
+  --phaser_core_spatial_zero_padding=10 \
   --bingham_peak_neighbors_radius=12\
   --gaussian_peak_neighbors_radius=8\
   --bingham_samples_radius=1 \

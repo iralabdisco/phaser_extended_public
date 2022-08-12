@@ -168,8 +168,8 @@ SphOptMultipleRegistration::estimateMultipleTranslation(
             << " ms";
 
     phaser_core::SampledSignal corr_signal = aligner_.getCorrelation();
+    VLOG(1) << "Spatial correlation size: " << corr_signal.size();
 
-    // TODO(fdila) Verify number of voxels/grid size.
     NeighborsPeakExtraction transl_peak_extractor(
         aligner_.getNumberOfVoxels(), FLAGS_gaussian_peak_neighbors_radius);
     std::set<uint32_t> transl_peaks;
