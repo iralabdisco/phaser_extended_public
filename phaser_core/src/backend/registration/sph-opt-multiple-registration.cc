@@ -60,9 +60,10 @@ SphOptMultipleRegistration::registerPointCloud(
       LOG(INFO) << "Dumped rotation correlation to file";
     }
 
-    // TODO(fdila): check padding for rotation grid
+    int full_spherical_bandwidth =
+        bandwidth_ + phaser_core::FLAGS_phaser_core_spherical_zero_padding;
     NeighborsPeakExtraction rot_peak_extractor(
-        bandwidth_ * 2, FLAGS_bingham_peak_neighbors_radius);
+        full_spherical_bandwidth * 2, FLAGS_bingham_peak_neighbors_radius);
     std::set<uint32_t> rot_peaks;
 
     rot_peak_extractor.extractPeaks(corr_rotation, &rot_peaks);
