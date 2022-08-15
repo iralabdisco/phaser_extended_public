@@ -1,46 +1,46 @@
 #!/usr/bin/env sh
 REST=$@
-#EXP_DIR="/home/fdila/"
-EXP_DIR="/home/fdila/ws/src/phaser_experimental/phaser_test_data/test_clouds/os0/"
+EXP_DIR="/home/fdila/"
+# EXP_DIR="/home/fdila/ws/src/phaser_experimental/phaser_test_data/test_clouds/os0/"
 current_time=$(date "+%Y-%m-%d-%H-%M")
 RESULT_DIR="/home/fdila/phaser_results/$current_time/"
 
 rm -rf $RESULT_DIR
 mkdir -p $RESULT_DIR
 
-cp "${EXP_DIR}target_1.ply" "$RESULT_DIR/target.ply"
-cp "${EXP_DIR}source_2.ply" "$RESULT_DIR/source.ply"
+cp "${EXP_DIR}target.ply" "$RESULT_DIR/target.ply"
+cp "${EXP_DIR}source.ply" "$RESULT_DIR/source.ply"
 cp "${EXP_DIR}readme.txt" "$RESULT_DIR/readme.txt"
 
 rosrun phaser_core phaser_core_driver \
   --v=3 \
   --alsologtostderr=1 \
   --registration_algorithm="sph-opt-multiple" \
-  --target_cloud="${EXP_DIR}target_1.ply" \
-  --source_cloud="${EXP_DIR}source_1.ply" \
+  --target_cloud="${EXP_DIR}target.ply" \
+  --source_cloud="${EXP_DIR}source.ply" \
   --reg_cloud="registered" \
   --result_folder="${RESULT_DIR}" \
   --phaser_pre_enable_geometric_cloud_segmentation=false \
-  --phaser_core_spherical_bandwidth=150 \
+  --phaser_core_spherical_bandwidth=120 \
   --phaser_core_spherical_low_pass_lower_bound=000 \
   --phaser_core_spherical_low_pass_upper_bound=10000 \
-  --phaser_core_spherical_zero_padding=10 \
+  --phaser_core_spherical_zero_padding=0\
   --phaser_core_spatial_n_voxels=200 \
-  --phaser_core_spatial_discretize_lower=-100 \
-  --phaser_core_spatial_discretize_upper=100 \
+  --phaser_core_spatial_discretize_lower=-50 \
+  --phaser_core_spatial_discretize_upper=50 \
   --phaser_core_spatial_low_pass_lower_bound=0 \
   --phaser_core_spatial_low_pass_upper_bound=1000 \
-  --phaser_core_spatial_zero_padding=10 \
-  --bingham_peak_neighbors_radius=12\
+  --phaser_core_spatial_zero_padding=0 \
+  --bingham_peak_neighbors_radius=8\
   --gaussian_peak_neighbors_radius=8\
   --bingham_samples_radius=1 \
   --gaussian_samples_radius=1 \
-  --max_peaks_number=2 \
+  --max_peaks_number=6 \
   --peaks_discard_threshold=0.5 \
   --visualize_correlation=false \
   --dump_correlation_to_file=true \
   --dump_peaks_to_file=true \
-  --estimate_rotation=true \
+  --estimate_rotation=false \
   --estimate_translation=true \
 
 echo "Saved to"

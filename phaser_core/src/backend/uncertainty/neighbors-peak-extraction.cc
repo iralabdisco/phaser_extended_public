@@ -49,6 +49,8 @@ void NeighborsPeakExtraction::extractPeaks(
       common::GridUtils::getNeighbors(
           i, grid_size_, neighbors_radius_, &neighbors);
       for (auto neighbor : neighbors) {
+        if (neighbor >= corr_size)
+          continue;
         if (corr.at(i) < corr.at(neighbor)) {
           is_max = false;
           break;
