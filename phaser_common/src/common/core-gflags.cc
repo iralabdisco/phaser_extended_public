@@ -79,6 +79,9 @@ DEFINE_bool(
 DEFINE_string(
     result_folder, "",
     "Defines the folder where the results should be dumped.");
+DEFINE_bool(
+    save_registered_clouds, true,
+    "Defines if the registered clouds should be saved.");
 DEFINE_bool(estimate_rotation, true, "Esttimates the rotation if true.");
 DEFINE_bool(estimate_translation, true, "Esttimates the translation if true.");
 }  // namespace phaser_core

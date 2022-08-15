@@ -38,9 +38,10 @@ rosrun phaser_core phaser_core_driver \
   --max_peaks_number=6 \
   --peaks_discard_threshold=0.5 \
   --visualize_correlation=false \
-  --dump_correlation_to_file=true \
-  --dump_peaks_to_file=true \
-  --estimate_rotation=false \
+  --dump_correlation_to_file=false \
+  --dump_peaks_to_file=false \
+  --save_registered_clouds=false \
+  --estimate_rotation=true \
   --estimate_translation=true \
 
 echo "Saved to"

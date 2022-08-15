@@ -84,7 +84,8 @@ static void registerCloud(
     std::string reg_cloud_n = phaser_core::FLAGS_result_folder + reg_cloud +
                               std::to_string(result_index) + ".ply";
     result_index++;
-    LOG(INFO) << "Writing point cloud to: " << reg_cloud_n;
+    if (phaser_core::FLAGS_save_registered_clouds)
+      LOG(INFO) << "Writing point cloud to: " << reg_cloud_n;
     writePointCloud(reg_cloud_n, result.getRegisteredCloud());
   }
   results_csv.close();
