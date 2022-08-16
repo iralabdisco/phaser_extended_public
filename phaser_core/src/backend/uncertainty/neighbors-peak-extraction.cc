@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <glog/logging.h>
+#include <omp.h>
 #include <set>
 #include <vector>
 
@@ -32,9 +33,6 @@ void NeighborsPeakExtraction::extractPeaks(
     const std::vector<double>& corr, std::set<uint32_t>* peaks) {
   VLOG(1) << "Extracting peaks...";
 
-  std::vector<int32_t> neighbors;
-  bool is_max = true;
-
   peaks->clear();
 
   auto max = std::max_element(corr.cbegin(), corr.cend());
@@ -44,20 +42,25 @@ void NeighborsPeakExtraction::extractPeaks(
 
   int32_t corr_size = corr.size();
 
+#pragma omp parallel for num_threads(8)
   for (int32_t i = 0; i < corr_size; i++) {
-    if (corr.at(i) > discard_threshold) {
+    int32_t current_index = i;
+    if (corr.at(current_index) > discard_threshold) {
+      std::vector<int32_t> neighbors;
+      bool is_max = true;
       common::GridUtils::getNeighbors(
-          i, grid_size_, neighbors_radius_, &neighbors);
+          current_index, grid_size_, neighbors_radius_, &neighbors);
       for (auto neighbor : neighbors) {
         if (neighbor >= corr_size)
           continue;
-        if (corr.at(i) < corr.at(neighbor)) {
+        if (corr.at(current_index) < corr.at(neighbor)) {
           is_max = false;
           break;
         }
       }
       if (is_max) {
-        uint32_t uint_i = (uint32_t)i;
+        uint32_t uint_i = (uint32_t)current_index;
+#pragma omp critical
         peaks->insert(uint_i);
       }
       is_max = true;
