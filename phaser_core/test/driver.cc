@@ -42,7 +42,9 @@ static void registerCloud(
   model::PointCloudPtr source_cloud = readPointCloud(source);
   CHECK_NOTNULL(target_cloud);
   CHECK_NOTNULL(source_cloud);
-  CHECK(!reg_cloud.empty());
+  if (phaser_core::FLAGS_save_registered_clouds) {
+    CHECK(!reg_cloud.empty());
+  }
   auto ctrl = std::make_unique<phaser_core::CloudController>(
       FLAGS_registration_algorithm.c_str());
   std::vector<model::RegistrationResult> results =
@@ -84,9 +86,10 @@ static void registerCloud(
     std::string reg_cloud_n = phaser_core::FLAGS_result_folder + reg_cloud +
                               std::to_string(result_index) + ".ply";
     result_index++;
-    if (phaser_core::FLAGS_save_registered_clouds)
+    if (phaser_core::FLAGS_save_registered_clouds) {
       LOG(INFO) << "Writing point cloud to: " << reg_cloud_n;
-    writePointCloud(reg_cloud_n, result.getRegisteredCloud());
+      writePointCloud(reg_cloud_n, result.getRegisteredCloud());
+    }
   }
   results_csv.close();
 }
