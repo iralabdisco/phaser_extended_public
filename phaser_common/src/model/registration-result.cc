@@ -98,6 +98,14 @@ const std::vector<double>& RegistrationResult::getRotationCorrelation()
   return rotation_correlation_;
 }
 
+void RegistrationResult::setPeakIndex(const int& index) {
+  peak_index_ = index;
+}
+
+int RegistrationResult::getPeakIndex() const noexcept {
+  return peak_index_;
+}
+
 model::RegistrationResult RegistrationResult::clone() const {
   model::RegistrationResult cloned_result;
 
@@ -115,6 +123,8 @@ model::RegistrationResult RegistrationResult::clone() const {
   cloned_result.uncertainty_ = uncertainty_;
   cloned_result.current_state_ = current_state_;
   cloned_result.rotation_correlation_ = rotation_correlation_;
+
+  cloned_result.peak_index_ = peak_index_;
 
   return cloned_result;
 }

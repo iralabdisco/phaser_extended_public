@@ -112,8 +112,11 @@ SphOptMultipleRegistration::estimateMultipleRotation(
     std::vector<uint32_t> peaks) {
   std::vector<model::RegistrationResult> results;
 
+  int rotation_n = 0;
   for (auto peak : peaks) {
     model::RegistrationResult result = estimateRotation(cloud_cur, corr, peak);
+    result.setPeakIndex(rotation_n * FLAGS_max_peaks_number);
+    rotation_n++;
     results.push_back(result);
   }
 
@@ -216,9 +219,12 @@ SphOptMultipleRegistration::estimateMultipleTranslation(
     }
     n_correlations++;
 
+    int translation_n = 0;
     for (auto peak : max_transl_peaks) {
       model::RegistrationResult result_t =
           estimateTranslation(&result, corr_signal, peak);
+      result_t.setPeakIndex(result.getPeakIndex() + translation_n);
+      translation_n++;
       results_t.push_back(result_t);
     }
   }

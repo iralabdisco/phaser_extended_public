@@ -52,16 +52,16 @@ static void registerCloud(
 
   std::ofstream results_csv;
   results_csv.open(phaser_core::FLAGS_result_folder + "results.csv");
-  results_csv << "x_r y_r z_r x_t y_t z_t" << std::endl;
-  int result_index = 0;
+  results_csv << "peak_n x_r y_r z_r x_t y_t z_t" << std::endl;
   for (auto result : results) {
-    LOG(INFO) << "Registration number " << result_index;
+    LOG(INFO) << "Registration number " << result.getPeakIndex();
     LOG(INFO) << "Registration result dual quaternion: "
               << result.getStateAsVec().transpose();
     LOG(INFO) << "Registration rotation: " << result.getRotation().transpose();
     LOG(INFO) << "Registration translation: "
               << result.getTranslation().transpose();
-    results_csv << result.getRotation().transpose()(0) << " "
+    results_csv << result.getPeakIndex() << " "
+                << result.getRotation().transpose()(0) << " "
                 << result.getRotation().transpose()(1) << " "
                 << result.getRotation().transpose()(2) << " "
                 << result.getTranslation().transpose()(0) << " "
@@ -84,8 +84,7 @@ static void registerCloud(
     //                  result.getRotUncertaintyEstimate())
     //                  ->getZ();
     std::string reg_cloud_n = phaser_core::FLAGS_result_folder + reg_cloud +
-                              std::to_string(result_index) + ".ply";
-    result_index++;
+                              std::to_string(result.getPeakIndex()) + ".ply";
     if (phaser_core::FLAGS_save_registered_clouds) {
       LOG(INFO) << "Writing point cloud to: " << reg_cloud_n;
       writePointCloud(reg_cloud_n, result.getRegisteredCloud());
