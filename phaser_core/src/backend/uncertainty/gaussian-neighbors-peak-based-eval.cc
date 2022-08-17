@@ -50,7 +50,7 @@ void GaussianNeighborsPeakBasedEval::retrievePeakNeighbors(
   // Gaussian fit
   neighbors_indexes.push_back(index);
 
-  samples->resize(4, neighbors_indexes.size());
+  samples->resize(3, neighbors_indexes.size());
   samples->setZero();
 
   weights->resize(neighbors_indexes.size());
