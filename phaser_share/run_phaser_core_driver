@@ -33,14 +33,14 @@ rosrun phaser_core phaser_core_driver \
   --phaser_core_spatial_zero_padding=0 \
   --bingham_peak_neighbors_radius=8\
   --gaussian_peak_neighbors_radius=8\
-  --bingham_samples_radius=1 \
+  --bingham_samples_radius=2 \
   --gaussian_samples_radius=1 \
   --max_peaks_number=3 \
   --peaks_discard_threshold=0.5 \
   --visualize_correlation=false \
-  --dump_correlation_to_file=false \
-  --dump_peaks_to_file=false \
-  --save_registered_clouds=false \
+  --dump_correlation_to_file=true \
+  --dump_peaks_to_file=true \
+  --save_registered_clouds=true \
   --estimate_rotation=true \
   --estimate_translation=true \
 

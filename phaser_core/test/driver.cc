@@ -67,23 +67,23 @@ static void registerCloud(
                 << result.getTranslation().transpose()(0) << " "
                 << result.getTranslation().transpose()(1) << " "
                 << result.getTranslation().transpose()(2) << std::endl;
-    LOG(INFO) << "Bingham M: "
-              << std::static_pointer_cast<common::Bingham>(
-                     result.getRotUncertaintyEstimate())
-                     ->getM()
-                     .transpose();
-    LOG(INFO) << "Bingham Z: "
-              << std::static_pointer_cast<common::Bingham>(
-                     result.getRotUncertaintyEstimate())
-                     ->getZ()
-                     .transpose();
-    LOG(INFO) << "Bingham F: "
-              << std::static_pointer_cast<common::Bingham>(
-                     result.getRotUncertaintyEstimate())
-                     ->getF();
+    // LOG(INFO) << "Bingham M: "
+    //           << std::static_pointer_cast<common::Bingham>(
+    //                  result.getRotUncertaintyEstimate())
+    //                  ->getM()
+    //                  .transpose();
+    // LOG(INFO) << "Bingham Z: "
+    //           << std::static_pointer_cast<common::Bingham>(
+    //                  result.getRotUncertaintyEstimate())
+    //                  ->getZ()
+    //                  .transpose();
+    // LOG(INFO) << "Bingham F: "
+    //           << std::static_pointer_cast<common::Bingham>(
+    //                  result.getRotUncertaintyEstimate())
+    //                  ->getF();
     LOG(INFO) << "Rotation covariance: "
               << std::static_pointer_cast<common::Bingham>(
-                     result.getPosUncertaintyEstimate())
+                     result.getRotUncertaintyEstimate())
                      ->gaussianCovariance(false);
     LOG(INFO) << "Translation covariance: "
               << std::static_pointer_cast<common::Gaussian>(
