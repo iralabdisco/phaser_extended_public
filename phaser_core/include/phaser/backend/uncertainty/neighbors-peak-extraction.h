@@ -18,7 +18,8 @@ typedef struct grid_indexes {
 class NeighborsPeakExtraction : public BasePeakExtraction {
  public:
   NeighborsPeakExtraction();
-  explicit NeighborsPeakExtraction(int32_t grid_size, int32_t neighbor_radius);
+  explicit NeighborsPeakExtraction(
+      int32_t grid_size, int32_t neighbor_radius, int32_t max_peaks_number);
 
   void extractPeaks(
       const std::vector<double>& corr, std::set<uint32_t>* peaks) override;

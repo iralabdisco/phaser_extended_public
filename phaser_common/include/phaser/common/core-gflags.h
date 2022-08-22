@@ -32,7 +32,8 @@ DECLARE_int32(bingham_samples_radius);
 DECLARE_int32(gaussian_samples_radius);
 
 // Peak parameters
-DECLARE_int32(max_peaks_number);
+DECLARE_int32(max_peaks_number_rot);
+DECLARE_int32(max_peaks_number_transl);
 DECLARE_double(peaks_discard_threshold);
 
 // Utils

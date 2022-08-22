@@ -55,7 +55,11 @@ DEFINE_int32(
 
 // Peak parameters
 DEFINE_int32(
-    max_peaks_number, 4, "Take only the first best max_peak_number peaks.");
+    max_peaks_number_rot, 4,
+    "Take only the first best max_peak_number peaks for rotation.");
+DEFINE_int32(
+    max_peaks_number_transl, 4,
+    "Take only the first best max_peak_number peaks for translation.");
 DEFINE_double(
     peaks_discard_threshold, 0.5,
     "Do not evaluate peaks that are under threshold*maximum correlation.");

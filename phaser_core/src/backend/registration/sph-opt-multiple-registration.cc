@@ -63,7 +63,8 @@ SphOptMultipleRegistration::registerPointCloud(
     int full_spherical_bandwidth =
         bandwidth_ + phaser_core::FLAGS_phaser_core_spherical_zero_padding;
     NeighborsPeakExtraction rot_peak_extractor(
-        full_spherical_bandwidth * 2, FLAGS_bingham_peak_neighbors_radius);
+        full_spherical_bandwidth * 2, FLAGS_bingham_peak_neighbors_radius,
+        FLAGS_max_peaks_number_rot);
     std::set<uint32_t> rot_peaks;
 
     rot_peak_extractor.extractPeaks(corr_rotation, &rot_peaks);
@@ -115,7 +116,7 @@ SphOptMultipleRegistration::estimateMultipleRotation(
   int rotation_n = 0;
   for (auto peak : peaks) {
     model::RegistrationResult result = estimateRotation(cloud_cur, corr, peak);
-    result.setPeakIndex(rotation_n * FLAGS_max_peaks_number);
+    result.setPeakIndex(rotation_n * FLAGS_max_peaks_number_rot);
     rotation_n++;
     results.push_back(result);
   }
@@ -174,7 +175,8 @@ SphOptMultipleRegistration::estimateMultipleTranslation(
     VLOG(1) << "Spatial correlation size: " << corr_signal.size();
 
     NeighborsPeakExtraction transl_peak_extractor(
-        aligner_.getNumberOfVoxels(), FLAGS_gaussian_peak_neighbors_radius);
+        aligner_.getNumberOfVoxels(), FLAGS_gaussian_peak_neighbors_radius,
+        FLAGS_max_peaks_number_transl);
     std::set<uint32_t> transl_peaks;
 
     transl_peak_extractor.extractPeaks(corr_signal, &transl_peaks);

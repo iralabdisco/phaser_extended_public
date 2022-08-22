@@ -35,7 +35,8 @@ rosrun phaser_core phaser_core_driver \
   --gaussian_peak_neighbors_radius=8\
   --bingham_samples_radius=2 \
   --gaussian_samples_radius=1 \
-  --max_peaks_number=3 \
+  --max_peaks_number_rot=3 \
+  --max_peaks_number_transl=2 \
   --peaks_discard_threshold=0.5 \
   --visualize_correlation=false \
   --dump_correlation_to_file=true \

@@ -16,15 +16,15 @@ NeighborsPeakExtraction::NeighborsPeakExtraction()
       grid_size_(0),
       peaks_discard_threshold_(FLAGS_peaks_discard_threshold),
       neighbors_radius_(0),
-      max_peaks_number_(FLAGS_max_peaks_number) {}
+      max_peaks_number_(0) {}
 
 NeighborsPeakExtraction::NeighborsPeakExtraction(
-    int32_t grid_size, int32_t neighbor_radius)
+    int32_t grid_size, int32_t neighbor_radius, int32_t max_peaks_number)
     : manager_("neighbors-peaks"),
       grid_size_(grid_size),
       peaks_discard_threshold_(FLAGS_peaks_discard_threshold),
       neighbors_radius_(neighbor_radius),
-      max_peaks_number_(FLAGS_max_peaks_number) {
+      max_peaks_number_(max_peaks_number) {
   CHECK_GT(neighbors_radius_, 0);
   CHECK_GT(max_peaks_number_, 0);
 }
