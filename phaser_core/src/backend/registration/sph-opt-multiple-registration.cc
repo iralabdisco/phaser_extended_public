@@ -116,7 +116,7 @@ SphOptMultipleRegistration::estimateMultipleRotation(
   int rotation_n = 0;
   for (auto peak : peaks) {
     model::RegistrationResult result = estimateRotation(cloud_cur, corr, peak);
-    result.setPeakIndex(rotation_n * FLAGS_max_peaks_number_rot);
+    result.setPeakIndex(rotation_n * FLAGS_max_peaks_number_transl);
     rotation_n++;
     results.push_back(result);
   }
