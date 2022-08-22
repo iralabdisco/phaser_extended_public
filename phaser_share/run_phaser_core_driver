@@ -40,6 +40,7 @@ rosrun phaser_core phaser_core_driver \
   --visualize_correlation=false \
   --dump_correlation_to_file=true \
   --dump_peaks_to_file=true \
+  --dump_covariances=false \
   --save_registered_clouds=true \
   --estimate_rotation=true \
   --estimate_translation=true \

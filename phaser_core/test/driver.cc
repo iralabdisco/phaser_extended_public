@@ -67,23 +67,24 @@ static void registerCloud(
                 << result.getTranslation().transpose()(0) << " "
                 << result.getTranslation().transpose()(1) << " "
                 << result.getTranslation().transpose()(2) << std::endl;
-    std::ofstream b_uncertainty_csv;
-    b_uncertainty_csv.open(
-        phaser_core::FLAGS_result_folder + "bingham_cov" +
-        std::to_string(result.getPeakIndex()) + ".csv");
-    b_uncertainty_csv << std::static_pointer_cast<common::Bingham>(
-                             result.getRotUncertaintyEstimate())
-                             ->gaussianCovariance(false)
-                      << std::endl;
-    std::ofstream g_uncertainty_csv;
-    g_uncertainty_csv.open(
-        phaser_core::FLAGS_result_folder + "gaussian_cov" +
-        std::to_string(result.getPeakIndex()) + ".csv");
-    g_uncertainty_csv << std::static_pointer_cast<common::Gaussian>(
-                             result.getPosUncertaintyEstimate())
-                             ->getCov()
-                      << std::endl;
-
+    if (phaser_core::FLAGS_dump_covariances) {
+      std::ofstream b_uncertainty_csv;
+      b_uncertainty_csv.open(
+          phaser_core::FLAGS_result_folder + "bingham_cov" +
+          std::to_string(result.getPeakIndex()) + ".csv");
+      b_uncertainty_csv << std::static_pointer_cast<common::Bingham>(
+                               result.getRotUncertaintyEstimate())
+                               ->gaussianCovariance(false)
+                        << std::endl;
+      std::ofstream g_uncertainty_csv;
+      g_uncertainty_csv.open(
+          phaser_core::FLAGS_result_folder + "gaussian_cov" +
+          std::to_string(result.getPeakIndex()) + ".csv");
+      g_uncertainty_csv << std::static_pointer_cast<common::Gaussian>(
+                               result.getPosUncertaintyEstimate())
+                               ->getCov()
+                        << std::endl;
+    }
     // LOG(INFO) << "Bingham M: "
     //           << std::static_pointer_cast<common::Bingham>(
     //                  result.getRotUncertaintyEstimate())

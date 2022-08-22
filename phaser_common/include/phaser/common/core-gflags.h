@@ -38,6 +38,7 @@ DECLARE_double(peaks_discard_threshold);
 // Utils
 DECLARE_bool(dump_correlation_to_file);
 DECLARE_bool(dump_peaks_to_file);
+DECLARE_bool(dump_covariances);
 DECLARE_string(result_folder);
 DECLARE_bool(save_registered_clouds);
 DECLARE_bool(estimate_rotation);
