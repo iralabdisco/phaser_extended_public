@@ -44,6 +44,7 @@ DECLARE_string(result_folder);
 DECLARE_bool(save_registered_clouds);
 DECLARE_bool(estimate_rotation);
 DECLARE_bool(estimate_translation);
+DECLARE_string(truth_path);
 }  // namespace phaser_core
 
 #endif  // PHASER_COMMON_CORE_GFLAGS_H_

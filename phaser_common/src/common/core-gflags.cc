@@ -91,4 +91,5 @@ DEFINE_bool(
     "Defines if the registered clouds should be saved.");
 DEFINE_bool(estimate_rotation, true, "Esttimates the rotation if true.");
 DEFINE_bool(estimate_translation, true, "Esttimates the translation if true.");
+DEFINE_string(truth_path, ".gt.txt", "gt for the translation.");
 }  // namespace phaser_core
