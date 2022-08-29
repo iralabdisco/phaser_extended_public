@@ -45,6 +45,12 @@ Eigen::Vector3d RegistrationResult::getRotation() const {
   return common::RotationUtils::ConvertQuaternionToXYZ(q);
 }
 
+Eigen::Quaterniond RegistrationResult::getQuaternionRotation() const {
+  const common::DualQuaternion dq = current_state_.getCurrentState();
+  const Eigen::Quaterniond q = dq.getRotation();
+  return q;
+}
+
 const common::Vector_t& RegistrationResult::getTranslation() const {
   const common::DualQuaternion dq = current_state_.getCurrentState();
   return dq.getTranslation();

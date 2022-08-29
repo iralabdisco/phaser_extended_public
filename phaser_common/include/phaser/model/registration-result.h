@@ -25,6 +25,7 @@ class RegistrationResult {
   void setRegisteredCloud(model::PointCloudPtr reg_cloud);
 
   Eigen::Vector3d getRotation() const;
+  Eigen::Quaterniond getQuaternionRotation() const;
   const common::Vector_t& getTranslation() const;
   Eigen::VectorXd getStateAsVec() const;
 
