@@ -60,7 +60,8 @@ static void registerCloud(
     LOG(INFO) << "Registration rotation: " << result.getRotation().transpose();
     LOG(INFO) << "Registration translation: "
               << result.getTranslation().transpose();
-    results_csv << result.getQuaternionRotation().w() << " "
+    results_csv << result.getPeakIndex() << " "
+                << result.getQuaternionRotation().w() << " "
                 << result.getQuaternionRotation().x() << " "
                 << result.getQuaternionRotation().y() << " "
                 << result.getQuaternionRotation().z() << " "
