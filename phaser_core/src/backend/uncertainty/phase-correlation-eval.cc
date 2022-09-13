@@ -1,6 +1,10 @@
 #include "phaser/backend/uncertainty/phase-correlation-eval.h"
 
+#include <fstream>
 #include <glog/logging.h>
+#include <iterator>
+
+#include "phaser/common/core-gflags.h"
 
 namespace phaser_core {
 
@@ -13,6 +17,16 @@ common::BaseDistributionPtr PhaseCorrelationEval::calcRotationUncertainty(
     const SphericalCorrelation& sph_corr) {
   const uint32_t bw = sph_corr.getBandwidth();
   const std::vector<double> corr = sph_corr.getCorrelation();
+
+  if (FLAGS_dump_correlation_to_file) {
+    std::ofstream file;
+    file.open("rotation_correlation.csv");
+    std::copy(
+        corr.begin(), corr.end(), std::ostream_iterator<double>(file, "\n"));
+    file.flush();
+    file.close();
+    LOG(INFO) << "Dumped rotation correlation to file";
+  }
   return rotation_eval_->evaluateCorrelationFromRotation(bw, corr);
 }
 
@@ -22,6 +36,15 @@ common::BaseDistributionPtr PhaseCorrelationEval::calcTranslationUncertainty(
   const uint32_t n_voxels = aligner.getNumberOfVoxels();
   const uint32_t lower_bound = aligner.getLowerBound();
   const uint32_t upper_bound = aligner.getUpperBound();
+  if (FLAGS_dump_correlation_to_file) {
+    std::ofstream file;
+    file.open("translation_correlation.csv");
+    std::copy(
+        corr.begin(), corr.end(), std::ostream_iterator<double>(file, "\n"));
+    file.flush();
+    file.close();
+    LOG(INFO) << "Dumped translation correlation to file";
+  }
   VLOG(1) << "----------- Computing translation with " << n_voxels << " voxels";
   return positional_eval_->evaluateCorrelationFromTranslation(
       n_voxels, lower_bound, upper_bound, corr);

@@ -44,6 +44,7 @@ cs_add_library(${PROJECT_NAME}_lib
    src/backend/registration/base-registration.cc
    src/backend/registration/sph-registration.cc
    src/backend/registration/sph-opt-registration.cc
+   src/backend/registration/sph-opt-multiple-registration.cc
    src/backend/registration/mock/sph-registration-mock-rotated.cc
    src/backend/registration/mock/sph-registration-mock-cutted.cc
    src/backend/registration/mock/sph-registration-mock-translated.cc
@@ -63,9 +64,13 @@ cs_add_library(${PROJECT_NAME}_lib
    src/backend/uncertainty/base-eval.cc
    src/backend/uncertainty/z-score-eval.cc
    src/backend/uncertainty/z-score-peak-extraction.cc
+   src/backend/uncertainty/neighbors-eval.cc
+   src/backend/uncertainty/neighbors-peak-extraction.cc
    src/backend/uncertainty/gaussian-peak-based-eval.cc
+   src/backend/uncertainty/gaussian-neighbors-peak-based-eval.cc
    src/backend/uncertainty/gmm-peak-based-eval.cc
-   src/backend/uncertainty/bingham-peak-based-eval.cc
+   src/backend/uncertainty/bingham-zscore-peak-based-eval.cc
+   src/backend/uncertainty/bingham-neighbors-peak-based-eval.cc
    src/backend/uncertainty/bmm-peak-based-eval.cc
    src/backend/uncertainty/peak-based-eval.cc
    src/backend/uncertainty/phase-correlation-eval.cc

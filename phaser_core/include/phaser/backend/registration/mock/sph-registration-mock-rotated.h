@@ -1,6 +1,8 @@
 #ifndef PHASER_BACKEND_REGISTRATION_MOCK_SPH_REGISTRATION_MOCK_ROTATED_H_
 #define PHASER_BACKEND_REGISTRATION_MOCK_SPH_REGISTRATION_MOCK_ROTATED_H_
 
+#include <vector>
+
 #include "phaser/backend/registration/sph-registration.h"
 
 namespace phaser_core {
@@ -9,7 +11,7 @@ class SphRegistrationMockRotated : public SphRegistration {
  public:
   SphRegistrationMockRotated();
   virtual ~SphRegistrationMockRotated() = default;
-  model::RegistrationResult registerPointCloud(
+  std::vector<model::RegistrationResult> registerPointCloud(
       model::PointCloudPtr cloud_prev, model::PointCloudPtr cloud_cur) override;
 
   void setRandomRotation(

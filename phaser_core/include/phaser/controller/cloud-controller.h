@@ -2,6 +2,7 @@
 #define PHASER_CONTROLLER_CLOUD_CONTROLLER_H_
 
 #include <string>
+#include <vector>
 
 #include "phaser/backend/registration/base-registration.h"
 #include "phaser/model/point-cloud.h"
@@ -13,7 +14,7 @@ class CloudController {
  public:
   explicit CloudController(std::string&& method = "sph");
   void initializeRegistrationAlgorithm(const std::string& method);
-  model::RegistrationResult registerPointCloud(
+  std::vector<model::RegistrationResult> registerPointCloud(
       model::PointCloudPtr target, model::PointCloudPtr source);
   void shutdown();
 

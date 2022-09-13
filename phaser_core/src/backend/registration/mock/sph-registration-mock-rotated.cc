@@ -2,6 +2,7 @@
 #include "phaser/common/rotation-utils.h"
 
 #include <glog/logging.h>
+#include <vector>
 
 DEFINE_double(
     mock_rotate_alpha_rad, M_PI / 2.0f,
@@ -20,7 +21,8 @@ SphRegistrationMockRotated::SphRegistrationMockRotated()
       mock_beta_rad_(FLAGS_mock_rotate_beta_rad),
       mock_gamma_rad_(FLAGS_mock_rotate_gamma_rad) {}
 
-model::RegistrationResult SphRegistrationMockRotated::registerPointCloud(
+std::vector<model::RegistrationResult>
+SphRegistrationMockRotated::registerPointCloud(
     model::PointCloudPtr cloud_prev, model::PointCloudPtr) {
   CHECK_NOTNULL(cloud_prev);
   cloud_prev->initialize_kd_tree();
@@ -30,7 +32,10 @@ model::RegistrationResult SphRegistrationMockRotated::registerPointCloud(
           *cloud_prev, mock_alpha_rad_, mock_beta_rad_, mock_gamma_rad_));
   syn_cloud->initialize_kd_tree();
 
-  return estimateRotation(cloud_prev, syn_cloud);
+  std::vector<model::RegistrationResult> results;
+  model::RegistrationResult result = estimateRotation(cloud_prev, syn_cloud);
+  results.push_back(result);
+  return results;
 }
 
 void SphRegistrationMockRotated::setRandomRotation(

@@ -22,7 +22,7 @@ PyramidLevel LaplacePyramid::reduce(
                                  ? py_struct.getCoefficientsForLevel(lvl - 1)
                                  : py_struct.getInitialCoefficientSize();
 
-  VLOG(2) << "Reducing the bw using [" << lower_bound << ", " << upper_bound
+  VLOG(3) << "Reducing the bw using [" << lower_bound << ", " << upper_bound
           << "] resulting in " << n_low_pass << " samples.";
   std::vector<complex_t> coeff_low_pass(n_low_pass);
   std::vector<complex_t> coeff_laplace(coefficients, coefficients + n_laplace);
@@ -46,7 +46,7 @@ void LaplacePyramid::expand(
   const uint32_t lower_bound = std::round(n_coeffs / divider_);
   const uint32_t upper_bound = n_coeffs - lower_bound;
 
-  VLOG(2) << "Expanding the bw using [" << lower_bound << ", " << upper_bound
+  VLOG(3) << "Expanding the bw using [" << lower_bound << ", " << upper_bound
           << "] resulting in " << n_coeffs << " samples.";
 
   // #pragma omp parallel for num_threads(4)
@@ -66,7 +66,7 @@ std::vector<complex_t> LaplacePyramid::fuseChannels(
   PyramidStruct py_struct(n_coeffs, n_levels, divider_);
 
   // Build the pyramid levels per channel.
-  VLOG(2) << "Constructing " << n_levels << " pyramid levels for " << n_channels
+  VLOG(3) << "Constructing " << n_levels << " pyramid levels for " << n_channels
           << " channels.";
   std::vector<complex_t*> coefficients(n_channels);
   for (uint32_t i = 0; i < n_channels; ++i) {
@@ -78,7 +78,7 @@ std::vector<complex_t> LaplacePyramid::fuseChannels(
 #pragma omp parallel for num_threads(n_channels) \
     shared(pyramid_level, coefficients)
     for (uint32_t j = 0u; j < n_channels; ++j) {
-      VLOG(2) << "Level " << i << " and channel " << j;
+      VLOG(3) << "Level " << i << " and channel " << j;
       pyramid_level[j] = reduce(coefficients[j], py_struct, i);
       coefficients[j] = pyramid_level[j].first.data();
     }
@@ -87,12 +87,12 @@ std::vector<complex_t> LaplacePyramid::fuseChannels(
   }
 
   // Average the last low pass layer.
-  VLOG(2) << "Filtering the low pass layer.";
+  VLOG(3) << "Filtering the low pass layer.";
   std::vector<complex_t> low_pass =
       fuseLastLowPassLayer(pyramids_per_channel.back());
 
   // Based on the fused levels, reconstruct the signal.
-  VLOG(2) << "Reconstructing the fused signal.";
+  VLOG(3) << "Reconstructing the fused signal.";
   std::vector<complex_t>* recon = &low_pass;
   for (int8_t i = n_levels - 1; i >= 0; --i) {
     CHECK_NOTNULL(recon);

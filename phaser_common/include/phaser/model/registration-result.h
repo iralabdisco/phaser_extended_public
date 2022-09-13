@@ -25,6 +25,7 @@ class RegistrationResult {
   void setRegisteredCloud(model::PointCloudPtr reg_cloud);
 
   Eigen::Vector3d getRotation() const;
+  Eigen::Quaterniond getQuaternionRotation() const;
   const common::Vector_t& getTranslation() const;
   Eigen::VectorXd getStateAsVec() const;
 
@@ -42,6 +43,11 @@ class RegistrationResult {
   void setRotationCorrelation(const std::vector<double>& rot);
   const std::vector<double>& getRotationCorrelation() const noexcept;
 
+  void setPeakIndex(const int& index);
+  int getPeakIndex() const noexcept;
+
+  model::RegistrationResult clone() const;
+
  private:
   model::PointCloudPtr reg_cloud_;
   std::array<double, 3> rotation_;
@@ -51,6 +57,7 @@ class RegistrationResult {
   common::BaseDistributionPtr uncertainty_;
   State current_state_;
   std::vector<double> rotation_correlation_;
+  int peak_index_;
 };
 
 }  // namespace model
