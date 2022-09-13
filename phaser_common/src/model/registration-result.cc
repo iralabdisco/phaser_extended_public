@@ -45,6 +45,12 @@ Eigen::Vector3d RegistrationResult::getRotation() const {
   return common::RotationUtils::ConvertQuaternionToXYZ(q);
 }
 
+Eigen::Quaterniond RegistrationResult::getQuaternionRotation() const {
+  const common::DualQuaternion dq = current_state_.getCurrentState();
+  const Eigen::Quaterniond q = dq.getRotation();
+  return q;
+}
+
 const common::Vector_t& RegistrationResult::getTranslation() const {
   const common::DualQuaternion dq = current_state_.getCurrentState();
   return dq.getTranslation();
@@ -96,6 +102,37 @@ void RegistrationResult::setRotationCorrelation(
 const std::vector<double>& RegistrationResult::getRotationCorrelation()
     const noexcept {
   return rotation_correlation_;
+}
+
+void RegistrationResult::setPeakIndex(const int& index) {
+  peak_index_ = index;
+}
+
+int RegistrationResult::getPeakIndex() const noexcept {
+  return peak_index_;
+}
+
+model::RegistrationResult RegistrationResult::clone() const {
+  model::RegistrationResult cloned_result;
+
+  model::PointCloud cloned_cloud = reg_cloud_->clone();
+  cloned_result.setRegisteredCloud(
+      std::make_shared<model::PointCloud>(cloned_cloud));
+
+  cloned_result.rotation_ = rotation_;
+  cloned_result.translation_ = translation_;
+
+  cloned_result.found_solution_for_rotation_ = found_solution_for_rotation_;
+  cloned_result.found_solution_for_translation_ =
+      found_solution_for_translation_;
+
+  cloned_result.uncertainty_ = uncertainty_;
+  cloned_result.current_state_ = current_state_;
+  cloned_result.rotation_correlation_ = rotation_correlation_;
+
+  cloned_result.peak_index_ = peak_index_;
+
+  return cloned_result;
 }
 
 }  // namespace model

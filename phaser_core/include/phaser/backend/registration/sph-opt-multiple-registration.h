@@ -1,8 +1,9 @@
-#ifndef PHASER_BACKEND_REGISTRATION_SPH_OPT_REGISTRATION_H_
-#define PHASER_BACKEND_REGISTRATION_SPH_OPT_REGISTRATION_H_
+#ifndef PHASER_BACKEND_REGISTRATION_SPH_OPT_MULTIPLE_REGISTRATION_H_
+#define PHASER_BACKEND_REGISTRATION_SPH_OPT_MULTIPLE_REGISTRATION_H_
 
 #include <array>
 #include <memory>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -16,22 +17,29 @@
 
 namespace phaser_core {
 
-class SphOptRegistration : public BaseRegistration {
+class SphOptMultipleRegistration : public BaseRegistration {
  public:
-  SphOptRegistration();
-  virtual ~SphOptRegistration();
+  SphOptMultipleRegistration();
+  virtual ~SphOptMultipleRegistration();
 
   std::vector<model::RegistrationResult> registerPointCloud(
       model::PointCloudPtr cloud_prev, model::PointCloudPtr cloud_cur) override;
 
-  void getStatistics(
-      common::StatisticsManager* manager) const noexcept override;
+  void getStatistics(common::StatisticsManager* manager) const
+      noexcept override;
 
+  std::vector<model::RegistrationResult> estimateMultipleRotation(
+      model::PointCloudPtr cloud_cur, std::vector<double> corr,
+      std::vector<uint32_t> peaks);
   model::RegistrationResult estimateRotation(
-      model::PointCloudPtr cloud_prev, model::PointCloudPtr cloud_cur);
+      model::PointCloudPtr cloud_cur, std::vector<double> corr, int32_t index);
 
-  void estimateTranslation(
-      model::PointCloudPtr cloud_prev, model::RegistrationResult* result);
+  std::vector<model::RegistrationResult> estimateMultipleTranslation(
+      model::PointCloudPtr cloud_prev,
+      std::vector<model::RegistrationResult>* results);
+  model::RegistrationResult estimateTranslation(
+      model::RegistrationResult* result, std::vector<double> corr,
+      int32_t index);
 
   void setBandwith(const int bandwith);
 
@@ -51,8 +59,9 @@ class SphOptRegistration : public BaseRegistration {
   common::ThreadPool th_pool_;
 };
 
-using SphOptRegistrationPtr = std::unique_ptr<SphOptRegistration>;
+using SphOptMultipleRegistrationPtr =
+    std::unique_ptr<SphOptMultipleRegistration>;
 
 }  // namespace phaser_core
 
-#endif  // PHASER_BACKEND_REGISTRATION_SPH_OPT_REGISTRATION_H_
+#endif  // PHASER_BACKEND_REGISTRATION_SPH_OPT_MULTIPLE_REGISTRATION_H_

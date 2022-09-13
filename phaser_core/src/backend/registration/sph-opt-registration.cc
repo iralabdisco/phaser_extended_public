@@ -9,7 +9,7 @@
 #include "phaser/backend/correlation/spherical-combined-worker.h"
 #include "phaser/backend/correlation/spherical-intensity-worker.h"
 #include "phaser/backend/correlation/spherical-range-worker.h"
-#include "phaser/backend/uncertainty/bingham-peak-based-eval.h"
+#include "phaser/backend/uncertainty/bingham-zscore-peak-based-eval.h"
 #include "phaser/backend/uncertainty/gaussian-peak-based-eval.h"
 #include "phaser/common/core-gflags.h"
 #include "phaser/common/rotation-utils.h"
@@ -22,7 +22,7 @@ SphOptRegistration::SphOptRegistration()
     : BaseRegistration("SphOptRegistration"),
       bandwidth_(phaser_core::FLAGS_phaser_core_spherical_bandwidth),
       sampler_(phaser_core::FLAGS_phaser_core_spherical_bandwidth) {
-  BaseEvalPtr rot_eval = std::make_unique<BinghamPeakBasedEval>();
+  BaseEvalPtr rot_eval = std::make_unique<BinghamZScorePeakBasedEval>();
   BaseEvalPtr pos_eval = std::make_unique<GaussianPeakBasedEval>();
   correlation_eval_ = std::make_unique<PhaseCorrelationEval>(
       std::move(rot_eval), std::move(pos_eval));
@@ -31,7 +31,7 @@ SphOptRegistration::SphOptRegistration()
 }
 SphOptRegistration::~SphOptRegistration() {}
 
-model::RegistrationResult SphOptRegistration::registerPointCloud(
+std::vector<model::RegistrationResult> SphOptRegistration::registerPointCloud(
     model::PointCloudPtr cloud_prev, model::PointCloudPtr cloud_cur) {
   CHECK(cloud_prev);
   CHECK(cloud_cur);
@@ -43,7 +43,10 @@ model::RegistrationResult SphOptRegistration::registerPointCloud(
   // Register the point cloud.
   model::RegistrationResult result = estimateRotation(cloud_prev, cloud_cur);
   estimateTranslation(cloud_prev, &result);
-  return result;
+
+  std::vector<model::RegistrationResult> results;
+  results.push_back(result);
+  return results;
 }
 
 model::RegistrationResult SphOptRegistration::estimateRotation(

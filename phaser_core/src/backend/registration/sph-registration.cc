@@ -5,7 +5,7 @@
 #include <iostream>
 
 #include "phaser/backend/alignment/phase-aligner.h"
-#include "phaser/backend/uncertainty/bingham-peak-based-eval.h"
+#include "phaser/backend/uncertainty/bingham-zscore-peak-based-eval.h"
 #include "phaser/backend/uncertainty/bmm-peak-based-eval.h"
 #include "phaser/backend/uncertainty/gaussian-peak-based-eval.h"
 #include "phaser/backend/uncertainty/gmm-peak-based-eval.h"
@@ -28,15 +28,13 @@ DEFINE_string(
 DEFINE_bool(refine_rot_x, true, "Perform a rotation over x.");
 DEFINE_bool(refine_rot_y, true, "Perform a rotation over y.");
 DEFINE_bool(refine_rot_z, true, "Perform a rotation over z.");
-DEFINE_bool(estimate_rotation, true, "Esttimates the rotation if true.");
-DEFINE_bool(estimate_translation, true, "Esttimates the translation if true.");
 
 namespace phaser_core {
 
 SphRegistration::SphRegistration()
     : BaseRegistration("SphRegistration"),
-      sampler_(FLAGS_spherical_bandwith),
       sph_corr_(FLAGS_spherical_bandwith),
+      sampler_(FLAGS_spherical_bandwith),
       alignment_algorithm_(FLAGS_alignment_algorithm),
       rot_evaluation_algorithm_(FLAGS_rot_evaluation_algorithm),
       pos_evaluation_algorithm_(FLAGS_pos_evaluation_algorithm) {
@@ -46,8 +44,8 @@ SphRegistration::SphRegistration(
     std::string&& alignment_algorithm, std::string&& rot_evaluation_algorithm,
     std::string&& pos_evaluation_algorithm)
     : BaseRegistration("SphRegistration"),
-      sampler_(FLAGS_spherical_bandwith),
       sph_corr_(FLAGS_spherical_bandwith),
+      sampler_(FLAGS_spherical_bandwith),
       alignment_algorithm_(alignment_algorithm),
       rot_evaluation_algorithm_(rot_evaluation_algorithm),
       pos_evaluation_algorithm_(pos_evaluation_algorithm) {
@@ -58,7 +56,7 @@ void SphRegistration::initializeAlgorithms() {
   // Rotational evaluation
   BaseEvalPtr rot_eval;
   if (rot_evaluation_algorithm_ == "bingham")
-    rot_eval = std::make_unique<BinghamPeakBasedEval>();
+    rot_eval = std::make_unique<BinghamZScorePeakBasedEval>();
   else if (rot_evaluation_algorithm_ == "bmm")
     rot_eval = std::make_unique<BmmPeakBasedEval>();
   else
@@ -79,7 +77,7 @@ void SphRegistration::initializeAlgorithms() {
       std::move(rot_eval), std::move(pos_eval));
 }
 
-model::RegistrationResult SphRegistration::registerPointCloud(
+std::vector<model::RegistrationResult> SphRegistration::registerPointCloud(
     model::PointCloudPtr cloud_prev, model::PointCloudPtr cloud_cur) {
   CHECK(cloud_prev);
   CHECK(cloud_cur);
@@ -95,7 +93,9 @@ model::RegistrationResult SphRegistration::registerPointCloud(
   if (FLAGS_estimate_translation)
     estimateTranslation(cloud_prev, &result);
 
-  return result;
+  std::vector<model::RegistrationResult> results;
+  results.push_back(result);
+  return results;
 }
 
 model::RegistrationResult SphRegistration::estimateRotation(

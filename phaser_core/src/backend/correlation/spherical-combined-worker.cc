@@ -36,25 +36,33 @@ void SphericalCombinedWorker::run() {
   convertFunctionValues(f_values_, func_range, &f_range);
   convertFunctionValues(h_values_, func_range, &h_range);
 
+  // TODO(fdila) temporary workaround if reflectivity and ambient are not
+  // present
+
   // Get the reflectivities.
-  SampledSignal f_reflectivity;
-  SampledSignal h_reflectivity;
-  std::function<double(const model::FunctionValue&)> func_reflectivity =
-      [](const model::FunctionValue& v) { return v.getAveragedReflectivity(); };
-  convertFunctionValues(f_values_, func_reflectivity, &f_reflectivity);
-  convertFunctionValues(h_values_, func_reflectivity, &h_reflectivity);
+  // SampledSignal f_reflectivity;
+  // SampledSignal h_reflectivity;
+  // std::function<double(const model::FunctionValue&)> func_reflectivity =
+  //     [](const model::FunctionValue& v) { return v.getAveragedReflectivity();
+  //     };
+  // convertFunctionValues(f_values_, func_reflectivity, &f_reflectivity);
+  // convertFunctionValues(h_values_, func_reflectivity, &h_reflectivity);
 
   // Get the ambient points.
-  SampledSignal f_ambient;
-  SampledSignal h_ambient;
-  std::function<double(const model::FunctionValue&)> func_ambient =
-      [](const model::FunctionValue& v) { return v.getAveragedAmbientNoise(); };
-  convertFunctionValues(f_values_, func_ambient, &f_ambient);
-  convertFunctionValues(h_values_, func_ambient, &h_ambient);
+  // SampledSignal f_ambient;
+  // SampledSignal h_ambient;
+  // std::function<double(const model::FunctionValue&)> func_ambient =
+  //     [](const model::FunctionValue& v) { return v.getAveragedAmbientNoise();
+  //     };
+  // convertFunctionValues(f_values_, func_ambient, &f_ambient);
+  // convertFunctionValues(h_values_, func_ambient, &h_ambient);
+
+  // sph_corr_->correlateSampledSignals(
+  //     {f_range, f_intensities, f_reflectivity, f_ambient},
+  //     {h_range, h_intensities, h_reflectivity, h_ambient});
 
   sph_corr_->correlateSampledSignals(
-      {f_range, f_intensities, f_reflectivity, f_ambient},
-      {h_range, h_intensities, h_reflectivity, h_ambient});
+      {f_range, f_intensities}, {h_range, h_intensities});
   is_completed_ = true;
 }
 

@@ -1,13 +1,15 @@
 #include "phaser/backend/registration/mock/sph-registration-mock-cutted.h"
-#include "phaser/common/rotation-utils.h"
 
-#include <pcl/filters/passthrough.h>
-#include <pcl/common/common.h>
 #include <glog/logging.h>
+#include <pcl/common/common.h>
+#include <pcl/filters/passthrough.h>
+
+#include "phaser/common/rotation-utils.h"
 
 namespace phaser_core {
 
-model::RegistrationResult SphRegistrationMockCutted::registerPointCloud(
+std::vector<model::RegistrationResult>
+SphRegistrationMockCutted::registerPointCloud(
     model::PointCloudPtr cloud_prev, model::PointCloudPtr cloud_cur) {
   CHECK(cloud_prev);
   CHECK(cloud_cur);
@@ -30,7 +32,6 @@ model::RegistrationResult SphRegistrationMockCutted::registerPointCloud(
   common::RotationUtils::RotateAroundXYZ(syn_cloud, 0.2, 0.55, 1.23);
   syn_cloud->writeToFile("./");
 
-
   point_cloud->initialize_kd_tree();
   syn_cloud->initialize_kd_tree();
   model::RegistrationResult result = estimateRotation(point_cloud, syn_cloud);
@@ -39,18 +40,21 @@ model::RegistrationResult SphRegistrationMockCutted::registerPointCloud(
 
   reg_cloud->writeToFile("./");
 
-  return result;
+  std::vector<model::RegistrationResult> results;
+  results.push_back(result);
+  return results;
 }
 
 model::PointCloudPtr SphRegistrationMockCutted::cutPointCloud(
-    common::PointCloud_tPtr& cloud, double min, double max, std::string&& dim) {
+    common::PointCloud_tPtr& cloud, double min, double max,
+    std::string&& dim) const {
   VLOG(3) << "pass using " << min << " and " << max;
-  common::PointCloud_tPtr mod_cloud (new common::PointCloud_t);
+  common::PointCloud_tPtr mod_cloud(new common::PointCloud_t);
   pcl::PassThrough<common::Point_t> pass;
-  pass.setInputCloud (cloud);
-  pass.setFilterFieldName (dim);
-  pass.setFilterLimits (min,max);
-  pass.filter (*mod_cloud);
+  pass.setInputCloud(cloud);
+  pass.setFilterFieldName(dim);
+  pass.setFilterLimits(min, max);
+  pass.filter(*mod_cloud);
   return std::make_shared<model::PointCloud>(mod_cloud);
 }
 

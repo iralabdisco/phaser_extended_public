@@ -4,6 +4,7 @@
 #include "phaser/common/statistic-utils.h"
 
 #include <glog/logging.h>
+#include <vector>
 
 DEFINE_double(mock_translate_x, 5, "Defines a mock translation in x.");
 DEFINE_double(mock_translate_y, 5, "Defines a mock translation in y.");
@@ -16,7 +17,8 @@ SphRegistrationMockTranslated::SphRegistrationMockTranslated()
       mock_trans_y_(FLAGS_mock_translate_y),
       mock_trans_z_(FLAGS_mock_translate_z) {}
 
-model::RegistrationResult SphRegistrationMockTranslated::registerPointCloud(
+std::vector<model::RegistrationResult>
+SphRegistrationMockTranslated::registerPointCloud(
     model::PointCloudPtr cloud_prev, model::PointCloudPtr) {
   cloud_prev->initialize_kd_tree();
 
@@ -26,7 +28,9 @@ model::RegistrationResult SphRegistrationMockTranslated::registerPointCloud(
   syn_cloud.initialize_kd_tree();
   model::RegistrationResult result(std::move(syn_cloud));
   estimateTranslation(cloud_prev, &result);
-  return result;
+  std::vector<model::RegistrationResult> results;
+  results.push_back(result);
+  return results;
 }
 
 void SphRegistrationMockTranslated::setRandomTranslation(
@@ -38,15 +42,15 @@ void SphRegistrationMockTranslated::setRandomTranslation(
 }
 
 model::PointCloud SphRegistrationMockTranslated::pertubPointCloud(
-    model::PointCloud &cloud,
-    const float x, const float y, const float z) {
+    model::PointCloud& cloud, const float x, const float y,
+    const float z) const {
   return common::TranslationUtils::TranslateXYZCopy(cloud, x, y, z);
 }
 
 std::vector<model::FunctionValue>
 SphRegistrationMockTranslated::pertubFunctionValues(
     std::vector<model::FunctionValue>& values, const float x, const float y,
-    const float z) {
+    const float z) const {
   std::vector<model::FunctionValue> res;
   for (model::FunctionValue& val : values) {
     model::FunctionValue cur;
