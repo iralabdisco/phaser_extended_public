@@ -91,28 +91,7 @@ static void registerCloud(
                           << std::endl;
       }
     }
-    // LOG(INFO) << "Bingham M: "
-    //           << std::static_pointer_cast<common::Bingham>(
-    //                  result.getRotUncertaintyEstimate())
-    //                  ->getM()
-    //                  .transpose();
-    // LOG(INFO) << "Bingham Z: "
-    //           << std::static_pointer_cast<common::Bingham>(
-    //                  result.getRotUncertaintyEstimate())
-    //                  ->getZ()
-    //                  .transpose();
-    // LOG(INFO) << "Bingham F: "
-    //           << std::static_pointer_cast<common::Bingham>(
-    //                  result.getRotUncertaintyEstimate())
-    //                  ->getF();
-    // LOG(INFO) << "Rotation covariance: "
-    //           << std::static_pointer_cast<common::Bingham>(
-    //                  result.getRotUncertaintyEstimate())
-    //                  ->gaussianCovariance(false);
-    // LOG(INFO) << "Translation covariance: "
-    //           << std::static_pointer_cast<common::Gaussian>(
-    //                  result.getPosUncertaintyEstimate())
-    //                  ->getCov();
+
     std::string reg_cloud_n = phaser_core::FLAGS_result_folder + reg_cloud +
                               std::to_string(result.getPeakIndex()) + ".ply";
     if (phaser_core::FLAGS_save_registered_clouds) {
