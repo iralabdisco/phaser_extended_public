@@ -43,32 +43,33 @@ SphOptMultipleRegistration::registerPointCloud(
 
   std::vector<model::RegistrationResult> results_rotation;
 
-  if (FLAGS_truth_path.empty()) {
-    LOG(FATAL) << "No truth file specified.";
-  }
-
-  std::ifstream input_gt(FLAGS_truth_path);
-  if (!input_gt.is_open() || !input_gt.good()) {
-    LOG(FATAL) << "Unable to open truth file. Aborting";
-  }
   std::vector<double> gt_translation;
-  std::string line;
-
-  while (std::getline(input_gt, line)) {
-    std::stringstream lineStream(line);
-    std::string cell;
-    while (std::getline(lineStream, cell, ',')) {
-      gt_translation.emplace_back(std::stod(cell));
+  if (FLAGS_synthetic_exp) {
+    if (FLAGS_truth_path.empty()) {
+      LOG(FATAL) << "No truth file specified.";
     }
+    std::ifstream input_gt(FLAGS_truth_path);
+    if (!input_gt.is_open() || !input_gt.good()) {
+      LOG(FATAL) << "Unable to open truth file. Aborting";
+    }
+    std::string line;
+
+    while (std::getline(input_gt, line)) {
+      std::stringstream lineStream(line);
+      std::string cell;
+      while (std::getline(lineStream, cell, ',')) {
+        gt_translation.emplace_back(std::stod(cell));
+      }
+    }
+
+    VLOG(1) << "gt_translation: " << gt_translation.at(0) << " "
+            << gt_translation.at(1) << " " << gt_translation.at(2);
+
+    // transform cloud_prev to sensor frame
+    common::TranslationUtils::TranslateXYZ(
+        cloud_cur, -gt_translation.at(0), -gt_translation.at(1),
+        -gt_translation.at(2));
   }
-
-  VLOG(1) << "gt_translation: " << gt_translation.at(0) << " "
-          << gt_translation.at(1) << " " << gt_translation.at(2);
-
-  // transform cloud_prev to sensor frame
-  common::TranslationUtils::TranslateXYZ(
-      cloud_cur, -gt_translation.at(0), -gt_translation.at(1),
-      -gt_translation.at(2));
 
   if (FLAGS_estimate_rotation) {
     std::vector<SphericalCorrelation> correlations =
@@ -124,10 +125,12 @@ SphOptMultipleRegistration::registerPointCloud(
     results_rotation.push_back(result);
   }
 
-  for (auto result : results_rotation) {
-    common::TranslationUtils::TranslateXYZ(
-        result.getRegisteredCloud(), gt_translation.at(0), gt_translation.at(1),
-        gt_translation.at(2));
+  if (FLAGS_synthetic_exp) {
+    for (auto result : results_rotation) {
+      common::TranslationUtils::TranslateXYZ(
+          result.getRegisteredCloud(), gt_translation.at(0),
+          gt_translation.at(1), gt_translation.at(2));
+    }
   }
 
   std::vector<model::RegistrationResult> final_results;

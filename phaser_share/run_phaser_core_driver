@@ -18,6 +18,7 @@ rosrun phaser_core phaser_core_driver \
   --registration_algorithm="sph-opt-multiple" \
   --target_cloud="${EXP_DIR}Box_intensity.ply" \
   --source_cloud="${EXP_DIR}Box_intensity.ply" \
+  --synthetic_exp=false \
   --truth_path="${EXP_DIR}gt.txt" \
   --reg_cloud="registered" \
   --result_folder="${RESULT_DIR}" \
