@@ -39,7 +39,7 @@ void SphericalCombinedWorker::run() {
   // TODO(fdila) temporary workaround if reflectivity and ambient are not
   // present
 
-  // Get the reflectivities.
+  // // Get the reflectivities.
   // SampledSignal f_reflectivity;
   // SampledSignal h_reflectivity;
   // std::function<double(const model::FunctionValue&)> func_reflectivity =
@@ -48,7 +48,7 @@ void SphericalCombinedWorker::run() {
   // convertFunctionValues(f_values_, func_reflectivity, &f_reflectivity);
   // convertFunctionValues(h_values_, func_reflectivity, &h_reflectivity);
 
-  // Get the ambient points.
+  // // Get the ambient points.
   // SampledSignal f_ambient;
   // SampledSignal h_ambient;
   // std::function<double(const model::FunctionValue&)> func_ambient =
