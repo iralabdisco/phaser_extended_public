@@ -93,8 +93,8 @@ SphOptMultipleRegistration::registerPointCloud(
     NeighborsPeakExtraction rot_peak_extractor(
         full_spherical_bandwidth * 2, FLAGS_bingham_peak_neighbors_radius,
         FLAGS_max_peaks_number_rot);
-    std::set<uint32_t> rot_peaks;
 
+    std::set<uint32_t> rot_peaks;
     rot_peak_extractor.extractPeaks(corr_rotation, &rot_peaks);
 
     std::vector<uint32_t> max_rot_peaks;
@@ -262,8 +262,8 @@ SphOptMultipleRegistration::estimateMultipleTranslation(
       model::RegistrationResult result_t =
           estimateTranslation(&result, corr_signal, peak);
       result_t.setPeakIndex(result.getPeakIndex() + translation_n);
-      translation_n++;
       results_t.push_back(result_t);
+      translation_n++;
     }
   }
   return results_t;
