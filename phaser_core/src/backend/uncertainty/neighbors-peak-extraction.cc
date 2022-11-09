@@ -96,6 +96,7 @@ void NeighborsPeakExtraction::getMaxPeaks(
     for (int i = 0; i < peaks->size(); i++) {
       max_peaks->push_back(peaks_with_idx.at(i).first);
     }
+    return;
   }
 
   for (int i = 0; i < max_peaks_number_; i++) {
