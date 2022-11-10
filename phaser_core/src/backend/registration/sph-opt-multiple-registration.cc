@@ -153,8 +153,10 @@ SphOptMultipleRegistration::estimateMultipleRotation(
   for (auto peak : peaks) {
     model::RegistrationResult result = estimateRotation(cloud_cur, corr, peak);
     result.setPeakIndex(rotation_n * FLAGS_max_peaks_number_transl);
-    rotation_n++;
+    double score = corr.at(peak);
+    result.setRotationCorrelationScore(score);
     results.push_back(result);
+    rotation_n++;
   }
 
   return results;
@@ -184,7 +186,6 @@ model::RegistrationResult SphOptMultipleRegistration::estimateRotation(
   model::RegistrationResult result(std::move(cloud_copy));
   result.setRotUncertaintyEstimate(rot);
   result.setRotationCorrelation(corr);
-
   return result;
 }
 
@@ -262,6 +263,7 @@ SphOptMultipleRegistration::estimateMultipleTranslation(
       model::RegistrationResult result_t =
           estimateTranslation(&result, corr_signal, peak);
       result_t.setPeakIndex(result.getPeakIndex() + translation_n);
+      result_t.setTranslationCorrelationScore(corr_signal.at(peak));
       results_t.push_back(result_t);
       translation_n++;
     }

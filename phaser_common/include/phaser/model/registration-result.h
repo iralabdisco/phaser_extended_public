@@ -46,6 +46,12 @@ class RegistrationResult {
   void setPeakIndex(const int& index);
   int getPeakIndex() const noexcept;
 
+  void setRotationCorrelationScore(const double& score);
+  double getRotationCorrelationScore() const noexcept;
+
+  void setTranslationCorrelationScore(const double& score);
+  double getTranslationCorrelationScore() const noexcept;
+
   model::RegistrationResult clone() const;
 
  private:
@@ -58,6 +64,8 @@ class RegistrationResult {
   State current_state_;
   std::vector<double> rotation_correlation_;
   int peak_index_;
+  double rotation_correlation_score_;
+  double translation_correlation_score_;
 };
 
 }  // namespace model

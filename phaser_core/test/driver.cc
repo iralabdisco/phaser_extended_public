@@ -52,7 +52,7 @@ static void registerCloud(
 
   std::ofstream results_csv;
   results_csv.open(phaser_core::FLAGS_result_folder + "results.csv");
-  results_csv << "peak_n q_w q_x q_y q_z x_t y_t z_t" << std::endl;
+  results_csv << "peak_n q_w q_x q_y q_z x_t y_t z_t corr_rotation corr_translation" << std::endl;
   for (auto result : results) {
     LOG(INFO) << "Registration number " << result.getPeakIndex();
     LOG(INFO) << "Registration result dual quaternion: "
@@ -67,7 +67,9 @@ static void registerCloud(
                 << result.getQuaternionRotation().z() << " "
                 << result.getTranslation()(0) << " "
                 << result.getTranslation()(1) << " "
-                << result.getTranslation()(2) << std::endl;
+                << result.getTranslation()(2) << " "
+                << result.getRotationCorrelationScore() << " "
+                << result.getTranslationCorrelationScore() << std::endl;
     if (phaser_core::FLAGS_dump_covariances) {
       if (phaser_core::FLAGS_estimate_rotation) {
         std::ofstream b_uncertainty_csv;

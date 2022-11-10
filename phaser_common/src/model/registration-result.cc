@@ -112,6 +112,21 @@ int RegistrationResult::getPeakIndex() const noexcept {
   return peak_index_;
 }
 
+void RegistrationResult::setRotationCorrelationScore(
+    const double& score) {
+  rotation_correlation_score_ = score;
+}
+double RegistrationResult::getRotationCorrelationScore() const noexcept {
+  return rotation_correlation_score_;
+}
+void RegistrationResult::setTranslationCorrelationScore(
+    const double& score) {
+  translation_correlation_score_ = score;
+}
+double RegistrationResult::getTranslationCorrelationScore() const noexcept {
+  return translation_correlation_score_;
+}
+
 model::RegistrationResult RegistrationResult::clone() const {
   model::RegistrationResult cloned_result;
 
@@ -131,6 +146,8 @@ model::RegistrationResult RegistrationResult::clone() const {
   cloned_result.rotation_correlation_ = rotation_correlation_;
 
   cloned_result.peak_index_ = peak_index_;
+  cloned_result.rotation_correlation_score_ = rotation_correlation_score_;
+  cloned_result.translation_correlation_score_ = translation_correlation_score_;
 
   return cloned_result;
 }
