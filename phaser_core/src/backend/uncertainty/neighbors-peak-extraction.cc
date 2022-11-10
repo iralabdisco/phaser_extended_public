@@ -73,34 +73,25 @@ void NeighborsPeakExtraction::extractPeaks(
 void NeighborsPeakExtraction::getMaxPeaks(
     const std::set<uint32_t>* peaks, const std::vector<double>* corr,
     std::vector<uint32_t>* max_peaks) {
-  std::vector<std::pair<int32_t, double>> peaks_with_idx;
-
-  if (peaks->size() <= max_peaks_number_) {
-    for (auto peak : *peaks)
-      max_peaks->push_back(peak);
-    return;
-  }
+  std::vector<std::pair<double, int32_t>> peaks_with_idx;
 
   for (auto peak : *peaks) {
-    peaks_with_idx.push_back(std::make_pair(peak, corr->at(peak)));
+    peaks_with_idx.push_back(std::make_pair(corr->at(peak), peak));
   }
 
   // sort descending based on the correlation
-  std::sort(
-      peaks_with_idx.begin(), peaks_with_idx.end(),
-      [](auto& left, auto& right) { return left.second > right.second; });
-
+  std::sort(peaks_with_idx.rbegin(), peaks_with_idx.rend());
   max_peaks->clear();
-
+  
   if (peaks->size() < max_peaks_number_) {
     for (int i = 0; i < peaks->size(); i++) {
-      max_peaks->push_back(peaks_with_idx.at(i).first);
+      max_peaks->push_back(peaks_with_idx.at(i).second);
     }
     return;
   }
 
   for (int i = 0; i < max_peaks_number_; i++) {
-    max_peaks->push_back(peaks_with_idx.at(i).first);
+    max_peaks->push_back(peaks_with_idx.at(i).second);
   }
 
   return;
