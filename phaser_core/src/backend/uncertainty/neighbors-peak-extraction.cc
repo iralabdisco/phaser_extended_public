@@ -19,12 +19,14 @@ NeighborsPeakExtraction::NeighborsPeakExtraction()
       max_peaks_number_(0) {}
 
 NeighborsPeakExtraction::NeighborsPeakExtraction(
-    int32_t grid_size, int32_t neighbor_radius, int32_t max_peaks_number)
+    int32_t grid_size, int32_t neighbor_radius, int32_t max_peaks_number, bool rotation, bool translation)
     : manager_("neighbors-peaks"),
       grid_size_(grid_size),
       peaks_discard_threshold_(FLAGS_peaks_discard_threshold),
       neighbors_radius_(neighbor_radius),
-      max_peaks_number_(max_peaks_number) {
+      max_peaks_number_(max_peaks_number),
+      rotation_(rotation),
+      translation_(translation) {
   CHECK_GT(neighbors_radius_, 0);
   CHECK_GT(max_peaks_number_, 0);
 }
@@ -42,13 +44,13 @@ void NeighborsPeakExtraction::extractPeaks(
 
   int32_t corr_size = corr.size();
 
-#pragma omp parallel for num_threads(8)
+#pragma omp parallel for num_threads(12)
   for (int32_t i = 0; i < corr_size; i++) {
     int32_t current_index = i;
     if (corr.at(current_index) > discard_threshold) {
       std::vector<int32_t> neighbors;
       bool is_max = true;
-      common::GridUtils::getNeighbors(
+      getNeighbors(
           current_index, grid_size_, neighbors_radius_, &neighbors);
       for (auto neighbor : neighbors) {
         if (neighbor >= corr_size)
@@ -81,8 +83,15 @@ void NeighborsPeakExtraction::getMaxPeaks(
 
   // sort descending based on the correlation
   std::sort(peaks_with_idx.rbegin(), peaks_with_idx.rend());
+
+  if(rotation_){
+    //TODO check if same rotations are present and keep only the one with the highest correlation
+    for(auto peak_with_idx : peaks_with_idx){
+    }
+  }
+
   max_peaks->clear();
-  
+
   if (peaks->size() < max_peaks_number_) {
     for (int i = 0; i < peaks->size(); i++) {
       max_peaks->push_back(peaks_with_idx.at(i).second);
@@ -97,4 +106,21 @@ void NeighborsPeakExtraction::getMaxPeaks(
   return;
 }
 
+void NeighborsPeakExtraction::getNeighbors(
+    int32_t index, int32_t grid_size, int32_t neighbors_radius,
+    std::vector<int32_t>* neighbors_indexes) {
+  if (rotation_) {
+    common::GridUtils::getNeighborsRotation(
+        index, grid_size, neighbors_radius, neighbors_indexes);
+    return;
+  }
+  if (translation_) {
+    common::GridUtils::getNeighborsTranslation(
+        index, grid_size, neighbors_radius, neighbors_indexes);
+    return;
+  }
+  common::GridUtils::getNeighbors(
+      index, grid_size, neighbors_radius, neighbors_indexes);
+  return;
+}
 }  // namespace phaser_core

@@ -35,7 +35,7 @@ void BinghamNeighborsPeakBasedEval::retrievePeakNeighbors(
   CHECK_NOTNULL(weights);
 
   std::vector<int32_t> neighbors_indexes;
-  common::GridUtils::getNeighbors(
+  common::GridUtils::getNeighborsRotation(
       index, bw * 2, FLAGS_bingham_samples_radius, &neighbors_indexes);
 
   // getNeighbors returns only the neighbors, we also need the max itself for
