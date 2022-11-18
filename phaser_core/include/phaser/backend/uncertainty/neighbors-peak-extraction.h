@@ -19,7 +19,8 @@ class NeighborsPeakExtraction : public BasePeakExtraction {
  public:
   NeighborsPeakExtraction();
   explicit NeighborsPeakExtraction(
-      int32_t grid_size, int32_t neighbor_radius, int32_t max_peaks_number, bool rotation, bool translation);
+      int32_t grid_size, int32_t neighbor_radius, int32_t max_peaks_number,
+      bool rotation, bool translation);
 
   void extractPeaks(
       const std::vector<double>& corr, std::set<uint32_t>* peaks) override;
@@ -27,7 +28,7 @@ class NeighborsPeakExtraction : public BasePeakExtraction {
   void getMaxPeaks(
       const std::set<uint32_t>* peaks, const std::vector<double>* norm_corr,
       std::vector<uint32_t>* max_peaks);
-  
+
   void getNeighbors(
       int32_t index, int32_t grid_size, int32_t neighbors_radius,
       std::vector<int32_t>* neighbors_indexes);

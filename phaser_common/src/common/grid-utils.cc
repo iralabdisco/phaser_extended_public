@@ -70,24 +70,23 @@ void GridUtils::getNeighborsTranslation(
       }
     }
   }
-  
+
   VLOG(4) << "Found " << neighbors_indexes->size() << " neighbors";
   return;
 }
 
 void GridUtils::getIndexesTranslation(
-      int32_t index, int32_t grid_size, int32_t neighbors_radius,
-      std::vector<int32_t>* neighbors_indexes){
-
+    int32_t index, int32_t grid_size, int32_t neighbors_radius,
+    std::vector<int32_t>* neighbors_indexes) {
   neighbors_indexes->clear();
 
-  if (index <= grid_size/2) {
+  if (index <= grid_size / 2) {
     // Left side
     for (int i = -neighbors_radius; i < 0; i++) {
       int tmp_index = index + i;
       if (tmp_index < 0)
         tmp_index = grid_size + tmp_index;
-      if (tmp_index < grid_size/2)
+      if (tmp_index < grid_size / 2)
         break;
       else
         neighbors_indexes->push_back(tmp_index);
@@ -95,18 +94,18 @@ void GridUtils::getIndexesTranslation(
     // Right side
     for (int i = 1; i <= neighbors_radius; i++) {
       int tmp_index = index + i;
-      if (tmp_index > grid_size/2)
+      if (tmp_index > grid_size / 2)
         break;
       neighbors_indexes->push_back(tmp_index);
     }
     return;
   }
 
-  if (index > grid_size/2){
+  if (index > grid_size / 2) {
     // Left side
     for (int i = -neighbors_radius; i <= 0; i++) {
       int tmp_index = index + i;
-      if (tmp_index < grid_size/2)
+      if (tmp_index < grid_size / 2)
         break;
       neighbors_indexes->push_back(tmp_index);
     }
@@ -115,7 +114,7 @@ void GridUtils::getIndexesTranslation(
       int tmp_index = index + i;
       if (tmp_index > grid_size)
         tmp_index = grid_size - tmp_index;
-      if (tmp_index > grid_size/2)
+      if (tmp_index > grid_size / 2)
         break;
       else
         neighbors_indexes->push_back(tmp_index);
@@ -124,9 +123,9 @@ void GridUtils::getIndexesTranslation(
   }
 }
 
-void GridUtils::getNeighborsRotation(int32_t index, int32_t grid_size, int32_t neighbors_radius,
-      std::vector<int32_t>* neighbors_indexes){
-
+void GridUtils::getNeighborsRotation(
+    int32_t index, int32_t grid_size, int32_t neighbors_radius,
+    std::vector<int32_t>* neighbors_indexes) {
   neighbors_indexes->clear();
 
   grid_indexes_t grid_indexes = ind2sub(index, grid_size);
@@ -153,18 +152,17 @@ void GridUtils::getNeighborsRotation(int32_t index, int32_t grid_size, int32_t n
       }
     }
   }
-  
+
   VLOG(4) << "Found " << neighbors_indexes->size() << " neighbors";
   return;
-
 }
 
-void GridUtils::getIndexesRotation(int32_t index, int32_t grid_size, int32_t neighbors_radius,
-      std::vector<int32_t>* neighbors_indexes){
-  
+void GridUtils::getIndexesRotation(
+    int32_t index, int32_t grid_size, int32_t neighbors_radius,
+    std::vector<int32_t>* neighbors_indexes) {
   neighbors_indexes->clear();
 
-  for(int i = -neighbors_radius; i <= neighbors_radius; i++){
+  for (int i = -neighbors_radius; i <= neighbors_radius; i++) {
     int tmp_index = index + i;
     if (tmp_index < 0)
       tmp_index = grid_size + tmp_index;

@@ -1,5 +1,6 @@
 #include "phaser/backend/uncertainty/neighbors-peak-extraction.h"
 
+#include <Eigen/Dense>
 #include <algorithm>
 #include <glog/logging.h>
 #include <omp.h>
@@ -8,6 +9,7 @@
 
 #include "phaser/common/core-gflags.h"
 #include "phaser/common/grid-utils.h"
+#include "phaser/common/rotation-utils.h"
 
 namespace phaser_core {
 
@@ -19,7 +21,8 @@ NeighborsPeakExtraction::NeighborsPeakExtraction()
       max_peaks_number_(0) {}
 
 NeighborsPeakExtraction::NeighborsPeakExtraction(
-    int32_t grid_size, int32_t neighbor_radius, int32_t max_peaks_number, bool rotation, bool translation)
+    int32_t grid_size, int32_t neighbor_radius, int32_t max_peaks_number,
+    bool rotation, bool translation)
     : manager_("neighbors-peaks"),
       grid_size_(grid_size),
       peaks_discard_threshold_(FLAGS_peaks_discard_threshold),
@@ -50,8 +53,7 @@ void NeighborsPeakExtraction::extractPeaks(
     if (corr.at(current_index) > discard_threshold) {
       std::vector<int32_t> neighbors;
       bool is_max = true;
-      getNeighbors(
-          current_index, grid_size_, neighbors_radius_, &neighbors);
+      getNeighbors(current_index, grid_size_, neighbors_radius_, &neighbors);
       for (auto neighbor : neighbors) {
         if (neighbor >= corr_size)
           continue;
@@ -77,18 +79,31 @@ void NeighborsPeakExtraction::getMaxPeaks(
     std::vector<uint32_t>* max_peaks) {
   std::vector<std::pair<double, int32_t>> peaks_with_idx;
 
-  for (auto peak : *peaks) {
-    peaks_with_idx.push_back(std::make_pair(corr->at(peak), peak));
+  if (rotation_) {
+    std::vector<std::pair<Eigen::Quaterniond, int32_t>> quaternion_with_idx;
+    for (auto peak : *peaks) {
+      auto zyz = common::RotationUtils::GetZYZFromIndex(peak, grid_size_ / 2);
+      auto quat = common::RotationUtils::ConvertZYZtoQuaternion(zyz);
+      quaternion_with_idx.push_back(std::make_pair(quat, peak));
+    }
+    std::unique(
+        quaternion_with_idx.begin(), quaternion_with_idx.end(),
+        [](const std::pair<Eigen::Quaterniond, int32_t>& a,
+           const std::pair<Eigen::Quaterniond, int32_t>& b) {
+          return a.first.isApprox(b.first, 0.01);
+        });
+    for (auto peak_with_idx : quaternion_with_idx) {
+      peaks_with_idx.push_back(
+          std::make_pair(corr->at(peak_with_idx.second), peak_with_idx.second));
+    }
+  } else {
+    for (auto peak : *peaks) {
+      peaks_with_idx.push_back(std::make_pair(corr->at(peak), peak));
+    }
   }
 
   // sort descending based on the correlation
   std::sort(peaks_with_idx.rbegin(), peaks_with_idx.rend());
-
-  if(rotation_){
-    //TODO check if same rotations are present and keep only the one with the highest correlation
-    for(auto peak_with_idx : peaks_with_idx){
-    }
-  }
 
   max_peaks->clear();
 
