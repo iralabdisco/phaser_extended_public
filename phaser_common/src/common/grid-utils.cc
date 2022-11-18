@@ -51,7 +51,7 @@ void GridUtils::getNeighborsTranslation(
   std::vector<int32_t> indexes_temp_x;
   std::vector<int32_t> indexes_temp_y;
   std::vector<int32_t> indexes_temp_z;
-
+  
   getIndexesTranslation(
       grid_indexes.x, grid_size, neighbors_radius, &indexes_temp_x);
   getIndexesTranslation(
@@ -78,16 +78,32 @@ void GridUtils::getNeighborsTranslation(
 void GridUtils::getIndexesTranslation(
     int32_t index, int32_t grid_size, int32_t neighbors_radius,
     std::vector<int32_t>* neighbors_indexes) {
+  
+  /*
+  The indexes from 0 to grid_size/2 are increasing positive translations,
+  the indexes from grid_size/2+1 to grid_size-1 are decreasing negative
+  (see common::TranslationUtils::ComputeTranslationFromIndex)
+
+  example:
+  n_voxels = 10
+  voxel_size = 0.5
+  indexes = 
+  [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+  corresponding_translations = 
+  [0, 0.05, 0.1, 0.15, 0.2, 0.25, -0.2, -0.15, -0.1, -0.05]
+  */
+
   neighbors_indexes->clear();
 
+  // Positive translations
   if (index <= grid_size / 2) {
     // Left side
     for (int i = -neighbors_radius; i < 0; i++) {
       int tmp_index = index + i;
       if (tmp_index < 0)
         tmp_index = grid_size + tmp_index;
-      if (tmp_index < grid_size / 2)
-        break;
+      if (tmp_index < grid_size / 2 && tmp_index >= index)
+        continue;
       else
         neighbors_indexes->push_back(tmp_index);
     }
@@ -95,29 +111,29 @@ void GridUtils::getIndexesTranslation(
     for (int i = 1; i <= neighbors_radius; i++) {
       int tmp_index = index + i;
       if (tmp_index > grid_size / 2)
-        break;
+        continue;
       neighbors_indexes->push_back(tmp_index);
     }
-    return;
   }
 
+  // Negative translations
   if (index > grid_size / 2) {
     // Left side
-    for (int i = -neighbors_radius; i <= 0; i++) {
+    for (int i = -neighbors_radius; i < 0; i++) {
       int tmp_index = index + i;
-      if (tmp_index < grid_size / 2)
-        break;
+      if (tmp_index <= grid_size / 2)
+        continue;
       neighbors_indexes->push_back(tmp_index);
     }
     // Right side
-    for (int i = 0; i <= neighbors_radius; i++) {
+    for (int i = 1; i <= neighbors_radius; i++) {
       int tmp_index = index + i;
-      if (tmp_index > grid_size)
-        tmp_index = grid_size - tmp_index;
-      if (tmp_index > grid_size / 2)
-        break;
-      else
-        neighbors_indexes->push_back(tmp_index);
+      if (tmp_index >= grid_size) {
+        tmp_index = tmp_index - grid_size;
+        if (tmp_index >= index)
+          continue;
+      }
+      neighbors_indexes->push_back(tmp_index);
     }
     return;
   }

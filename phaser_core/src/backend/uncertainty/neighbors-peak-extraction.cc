@@ -77,32 +77,39 @@ void NeighborsPeakExtraction::extractPeaks(
 void NeighborsPeakExtraction::getMaxPeaks(
     const std::set<uint32_t>* peaks, const std::vector<double>* corr,
     std::vector<uint32_t>* max_peaks) {
+
   std::vector<std::pair<double, int32_t>> peaks_with_idx;
 
   if (rotation_) {
+    // Create vector of pairs with quaternion and index
     std::vector<std::pair<Eigen::Quaterniond, int32_t>> quaternion_with_idx;
     for (auto peak : *peaks) {
       auto zyz = common::RotationUtils::GetZYZFromIndex(peak, grid_size_ / 2);
       auto quat = common::RotationUtils::ConvertZYZtoQuaternion(zyz);
       quaternion_with_idx.push_back(std::make_pair(quat, peak));
     }
+    // Delete duplicate quaternions
+    VLOG(1) << "Rotations before deleting duplicates: " << quaternion_with_idx.size();
     std::unique(
         quaternion_with_idx.begin(), quaternion_with_idx.end(),
         [](const std::pair<Eigen::Quaterniond, int32_t>& a,
            const std::pair<Eigen::Quaterniond, int32_t>& b) {
           return a.first.isApprox(b.first, 0.01);
         });
+    // Push back to peaks_with_idx
     for (auto peak_with_idx : quaternion_with_idx) {
       peaks_with_idx.push_back(
           std::make_pair(corr->at(peak_with_idx.second), peak_with_idx.second));
     }
+    VLOG(1) << "Rotations after deleting duplicates: " << peaks_with_idx.size();
   } else {
+    // Push all peaks to peaks_with_idx
     for (auto peak : *peaks) {
       peaks_with_idx.push_back(std::make_pair(corr->at(peak), peak));
     }
   }
 
-  // sort descending based on the correlation
+  // Sort descending based on the correlation
   std::sort(peaks_with_idx.rbegin(), peaks_with_idx.rend());
 
   max_peaks->clear();
