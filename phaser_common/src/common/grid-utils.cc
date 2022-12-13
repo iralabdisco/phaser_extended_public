@@ -94,7 +94,7 @@ void GridUtils::getIndexesTranslation(
   */
 
   neighbors_indexes->clear();
-
+  neighbors_indexes->push_back(index);
   // Positive translations
   if (index <= grid_size / 2) {
     // Left side
@@ -178,15 +178,19 @@ void GridUtils::getIndexesRotation(
     std::vector<int32_t>* neighbors_indexes) {
   neighbors_indexes->clear();
 
+  neighbors_indexes->push_back(index);
   for (int i = -neighbors_radius; i <= neighbors_radius; i++) {
     int tmp_index = index + i;
     if (tmp_index < 0)
       tmp_index = grid_size + tmp_index;
+      neighbors_indexes->push_back(tmp_index);
+      continue;
     if (tmp_index > grid_size)
       tmp_index = tmp_index - grid_size;
+      neighbors_indexes->push_back(tmp_index);
+      continue;
     neighbors_indexes->push_back(tmp_index);
   }
-
   return;
 }
 

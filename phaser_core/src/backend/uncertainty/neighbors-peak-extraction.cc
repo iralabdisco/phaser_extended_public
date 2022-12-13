@@ -66,6 +66,7 @@ void NeighborsPeakExtraction::extractPeaks(
         uint32_t uint_i = (uint32_t)current_index;
 #pragma omp critical
         peaks->insert(uint_i);
+        VLOG(3) << "Peak " << uint_i << " neighbors number: " << neighbors.size();
       }
       is_max = true;
     }
