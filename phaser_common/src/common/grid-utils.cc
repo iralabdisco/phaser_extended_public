@@ -150,11 +150,13 @@ void GridUtils::getNeighborsRotation(
   std::vector<int32_t> indexes_temp_y;
   std::vector<int32_t> indexes_temp_z;
 
-  getIndexesRotation(
+  // The Z angles go from 0 to 2pi, so there is a wraparound
+  getIndexesRotationZ(
       grid_indexes.x, grid_size, neighbors_radius, &indexes_temp_x);
-  getIndexesRotation(
+  getIndexesRotationZ(
       grid_indexes.y, grid_size, neighbors_radius, &indexes_temp_y);
-  getIndexesRotation(
+  // The Y angles go from 0 to pi, so there is no wraparound
+  getIndexesRotationY(
       grid_indexes.z, grid_size, neighbors_radius, &indexes_temp_z);
 
   for (auto index_x : indexes_temp_x) {
@@ -173,7 +175,7 @@ void GridUtils::getNeighborsRotation(
   return;
 }
 
-void GridUtils::getIndexesRotation(
+void GridUtils::getIndexesRotationZ(
     int32_t index, int32_t grid_size, int32_t neighbors_radius,
     std::vector<int32_t>* neighbors_indexes) {
   neighbors_indexes->clear();
@@ -193,6 +195,22 @@ void GridUtils::getIndexesRotation(
   }
   return;
 }
+
+void GridUtils::getIndexesRotationY(
+  int32_t index, int32_t grid_size, int32_t neighbors_radius,
+    std::vector<int32_t>* neighbors_indexes){
+
+      neighbors_indexes->clear();
+      neighbors_indexes->push_back(index);
+      for (int i = -neighbors_radius; i <= neighbors_radius; i++){
+        int tmp_index = index + i;
+        if (tmp_index < 0)
+          continue;
+        if (tmp_index > grid_size -1)
+          continue;
+        neighbors_indexes->push_back(tmp_index);
+      }
+    }
 
 grid_indexes_t GridUtils::ind2sub(int32_t index, int32_t grid_size) {
   // %https://www.alecjacobson.com/weblog/?p=1425
