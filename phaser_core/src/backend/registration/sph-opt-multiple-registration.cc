@@ -43,32 +43,33 @@ SphOptMultipleRegistration::registerPointCloud(
 
   std::vector<model::RegistrationResult> results_rotation;
 
-  if (FLAGS_truth_path.empty()) {
-    LOG(FATAL) << "No truth file specified.";
-  }
-
-  std::ifstream input_gt(FLAGS_truth_path);
-  if (!input_gt.is_open() || !input_gt.good()) {
-    LOG(FATAL) << "Unable to open truth file. Aborting";
-  }
   std::vector<double> gt_translation;
-  std::string line;
-
-  while (std::getline(input_gt, line)) {
-    std::stringstream lineStream(line);
-    std::string cell;
-    while (std::getline(lineStream, cell, ',')) {
-      gt_translation.emplace_back(std::stod(cell));
+  if (FLAGS_synthetic_exp) {
+    if (FLAGS_truth_path.empty()) {
+      LOG(FATAL) << "No truth file specified.";
     }
+    std::ifstream input_gt(FLAGS_truth_path);
+    if (!input_gt.is_open() || !input_gt.good()) {
+      LOG(FATAL) << "Unable to open truth file. Aborting";
+    }
+    std::string line;
+
+    while (std::getline(input_gt, line)) {
+      std::stringstream lineStream(line);
+      std::string cell;
+      while (std::getline(lineStream, cell, ',')) {
+        gt_translation.emplace_back(std::stod(cell));
+      }
+    }
+
+    VLOG(1) << "gt_translation: " << gt_translation.at(0) << " "
+            << gt_translation.at(1) << " " << gt_translation.at(2);
+
+    // transform cloud_prev to sensor frame
+    common::TranslationUtils::TranslateXYZ(
+        cloud_cur, -gt_translation.at(0), -gt_translation.at(1),
+        -gt_translation.at(2));
   }
-
-  VLOG(1) << "gt_translation: " << gt_translation.at(0) << " "
-          << gt_translation.at(1) << " " << gt_translation.at(2);
-
-  // transform cloud_prev to sensor frame
-  common::TranslationUtils::TranslateXYZ(
-      cloud_cur, -gt_translation.at(0), -gt_translation.at(1),
-      -gt_translation.at(2));
 
   if (FLAGS_estimate_rotation) {
     std::vector<SphericalCorrelation> correlations =
@@ -91,9 +92,9 @@ SphOptMultipleRegistration::registerPointCloud(
         bandwidth_ + phaser_core::FLAGS_phaser_core_spherical_zero_padding;
     NeighborsPeakExtraction rot_peak_extractor(
         full_spherical_bandwidth * 2, FLAGS_bingham_peak_neighbors_radius,
-        FLAGS_max_peaks_number_rot);
-    std::set<uint32_t> rot_peaks;
+        FLAGS_max_peaks_number_rot, true, false);
 
+    std::set<uint32_t> rot_peaks;
     rot_peak_extractor.extractPeaks(corr_rotation, &rot_peaks);
 
     std::vector<uint32_t> max_rot_peaks;
@@ -124,10 +125,12 @@ SphOptMultipleRegistration::registerPointCloud(
     results_rotation.push_back(result);
   }
 
-  for (auto result : results_rotation) {
-    common::TranslationUtils::TranslateXYZ(
-        result.getRegisteredCloud(), gt_translation.at(0), gt_translation.at(1),
-        gt_translation.at(2));
+  if (FLAGS_synthetic_exp) {
+    for (auto result : results_rotation) {
+      common::TranslationUtils::TranslateXYZ(
+          result.getRegisteredCloud(), gt_translation.at(0),
+          gt_translation.at(1), gt_translation.at(2));
+    }
   }
 
   std::vector<model::RegistrationResult> final_results;
@@ -150,8 +153,10 @@ SphOptMultipleRegistration::estimateMultipleRotation(
   for (auto peak : peaks) {
     model::RegistrationResult result = estimateRotation(cloud_cur, corr, peak);
     result.setPeakIndex(rotation_n * FLAGS_max_peaks_number_transl);
-    rotation_n++;
+    double score = corr.at(peak);
+    result.setRotationCorrelationScore(score);
     results.push_back(result);
+    rotation_n++;
   }
 
   return results;
@@ -181,7 +186,6 @@ model::RegistrationResult SphOptMultipleRegistration::estimateRotation(
   model::RegistrationResult result(std::move(cloud_copy));
   result.setRotUncertaintyEstimate(rot);
   result.setRotationCorrelation(corr);
-
   return result;
 }
 
@@ -209,7 +213,7 @@ SphOptMultipleRegistration::estimateMultipleTranslation(
 
     NeighborsPeakExtraction transl_peak_extractor(
         aligner_.getNumberOfVoxels(), FLAGS_gaussian_peak_neighbors_radius,
-        FLAGS_max_peaks_number_transl);
+        FLAGS_max_peaks_number_transl, false, true);
     std::set<uint32_t> transl_peaks;
 
     transl_peak_extractor.extractPeaks(corr_signal, &transl_peaks);
@@ -259,8 +263,9 @@ SphOptMultipleRegistration::estimateMultipleTranslation(
       model::RegistrationResult result_t =
           estimateTranslation(&result, corr_signal, peak);
       result_t.setPeakIndex(result.getPeakIndex() + translation_n);
-      translation_n++;
+      result_t.setTranslationCorrelationScore(corr_signal.at(peak));
       results_t.push_back(result_t);
+      translation_n++;
     }
   }
   return results_t;

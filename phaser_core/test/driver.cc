@@ -52,7 +52,7 @@ static void registerCloud(
 
   std::ofstream results_csv;
   results_csv.open(phaser_core::FLAGS_result_folder + "results.csv");
-  results_csv << "peak_n q_w q_x q_y q_z x_t y_t z_t" << std::endl;
+  results_csv << "peak_n q_w q_x q_y q_z x_t y_t z_t corr_rotation corr_translation" << std::endl;
   for (auto result : results) {
     LOG(INFO) << "Registration number " << result.getPeakIndex();
     LOG(INFO) << "Registration result dual quaternion: "
@@ -67,47 +67,33 @@ static void registerCloud(
                 << result.getQuaternionRotation().z() << " "
                 << result.getTranslation()(0) << " "
                 << result.getTranslation()(1) << " "
-                << result.getTranslation()(2) << std::endl;
+                << result.getTranslation()(2) << " "
+                << result.getRotationCorrelationScore() << " "
+                << result.getTranslationCorrelationScore() << std::endl;
     if (phaser_core::FLAGS_dump_covariances) {
-      std::ofstream b_uncertainty_csv;
-      b_uncertainty_csv.open(
-          phaser_core::FLAGS_result_folder + "bingham_cov" +
-          std::to_string(result.getPeakIndex()) + ".csv");
-      b_uncertainty_csv << std::static_pointer_cast<common::Bingham>(
-                               result.getRotUncertaintyEstimate())
-                               ->gaussianCovariance(false)
-                        << std::endl;
-      std::ofstream g_uncertainty_csv;
-      g_uncertainty_csv.open(
-          phaser_core::FLAGS_result_folder + "gaussian_cov" +
-          std::to_string(result.getPeakIndex()) + ".csv");
-      g_uncertainty_csv << std::static_pointer_cast<common::Gaussian>(
-                               result.getPosUncertaintyEstimate())
-                               ->getCov()
-                        << std::endl;
+      if (phaser_core::FLAGS_estimate_rotation) {
+        std::ofstream b_uncertainty_csv;
+        b_uncertainty_csv.open(
+            phaser_core::FLAGS_result_folder + "bingham_cov" +
+            std::to_string(result.getPeakIndex()) + ".csv");
+        b_uncertainty_csv << std::static_pointer_cast<common::Bingham>(
+                                 result.getRotUncertaintyEstimate())
+                                 ->gaussianCovariance(false)
+                          << std::endl;
+      }
+
+      if (phaser_core::FLAGS_estimate_translation) {
+        std::ofstream g_uncertainty_csv;
+        g_uncertainty_csv.open(
+            phaser_core::FLAGS_result_folder + "gaussian_cov" +
+            std::to_string(result.getPeakIndex()) + ".csv");
+        g_uncertainty_csv << std::static_pointer_cast<common::Gaussian>(
+                                 result.getPosUncertaintyEstimate())
+                                 ->getCov()
+                          << std::endl;
+      }
     }
-    // LOG(INFO) << "Bingham M: "
-    //           << std::static_pointer_cast<common::Bingham>(
-    //                  result.getRotUncertaintyEstimate())
-    //                  ->getM()
-    //                  .transpose();
-    // LOG(INFO) << "Bingham Z: "
-    //           << std::static_pointer_cast<common::Bingham>(
-    //                  result.getRotUncertaintyEstimate())
-    //                  ->getZ()
-    //                  .transpose();
-    // LOG(INFO) << "Bingham F: "
-    //           << std::static_pointer_cast<common::Bingham>(
-    //                  result.getRotUncertaintyEstimate())
-    //                  ->getF();
-    LOG(INFO) << "Rotation covariance: "
-              << std::static_pointer_cast<common::Bingham>(
-                     result.getRotUncertaintyEstimate())
-                     ->gaussianCovariance(false);
-    LOG(INFO) << "Translation covariance: "
-              << std::static_pointer_cast<common::Gaussian>(
-                     result.getPosUncertaintyEstimate())
-                     ->getCov();
+
     std::string reg_cloud_n = phaser_core::FLAGS_result_folder + reg_cloud +
                               std::to_string(result.getPeakIndex()) + ".ply";
     if (phaser_core::FLAGS_save_registered_clouds) {

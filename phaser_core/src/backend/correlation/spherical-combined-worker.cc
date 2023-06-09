@@ -36,33 +36,46 @@ void SphericalCombinedWorker::run() {
   convertFunctionValues(f_values_, func_range, &f_range);
   convertFunctionValues(h_values_, func_range, &h_range);
 
-  // TODO(fdila) temporary workaround if reflectivity and ambient are not
-  // present
-
   // Get the reflectivities.
-  // SampledSignal f_reflectivity;
-  // SampledSignal h_reflectivity;
-  // std::function<double(const model::FunctionValue&)> func_reflectivity =
-  //     [](const model::FunctionValue& v) { return v.getAveragedReflectivity();
-  //     };
-  // convertFunctionValues(f_values_, func_reflectivity, &f_reflectivity);
-  // convertFunctionValues(h_values_, func_reflectivity, &h_reflectivity);
+  SampledSignal f_reflectivity;
+  SampledSignal h_reflectivity;
+  std::function<double(const model::FunctionValue&)> func_reflectivity =
+      [](const model::FunctionValue& v) { return v.getAveragedReflectivity();
+      };
+  convertFunctionValues(f_values_, func_reflectivity, &f_reflectivity);
+  convertFunctionValues(h_values_, func_reflectivity, &h_reflectivity);
 
   // Get the ambient points.
-  // SampledSignal f_ambient;
-  // SampledSignal h_ambient;
-  // std::function<double(const model::FunctionValue&)> func_ambient =
-  //     [](const model::FunctionValue& v) { return v.getAveragedAmbientNoise();
-  //     };
-  // convertFunctionValues(f_values_, func_ambient, &f_ambient);
-  // convertFunctionValues(h_values_, func_ambient, &h_ambient);
+  SampledSignal f_ambient;
+  SampledSignal h_ambient;
+  std::function<double(const model::FunctionValue&)> func_ambient =
+      [](const model::FunctionValue& v) { return v.getAveragedAmbientNoise();
+      };
+  convertFunctionValues(f_values_, func_ambient, &f_ambient);
+  convertFunctionValues(h_values_, func_ambient, &h_ambient);
 
-  // sph_corr_->correlateSampledSignals(
-  //     {f_range, f_intensities, f_reflectivity, f_ambient},
-  //     {h_range, h_intensities, h_reflectivity, h_ambient});
+  bool f_refl_zero = std::all_of(f_reflectivity.begin(), f_reflectivity.end(), [](int i) { return i==0; });
+  bool h_refl_zero = std::all_of(h_reflectivity.begin(), h_reflectivity.end(), [](int i) { return i==0; });
+  bool f_amb_zero = std::all_of(f_ambient.begin(), f_ambient.end(), [](int i) { return i==0; });
+  bool h_amb_zero = std::all_of(h_ambient.begin(), h_ambient.end(), [](int i) { return i==0; });
+  
+  bool has_reflectivity = !f_refl_zero && !h_refl_zero;
+  bool has_ambient = !f_amb_zero && !h_amb_zero;
 
-  sph_corr_->correlateSampledSignals(
-      {f_range, f_intensities}, {h_range, h_intensities});
+  std::vector<phaser_core::SampledSignal> f_channels = {f_intensities, f_range};
+  std::vector<phaser_core::SampledSignal> h_channels = {h_intensities, h_range};
+  if (has_reflectivity) {
+    VLOG(1) << "[SphericalCombinedWorker] Using reflectivity";
+    f_channels.push_back(f_reflectivity);
+    h_channels.push_back(h_reflectivity);
+  }
+  if (has_ambient) {
+    VLOG(1) << "[SphericalCombinedWorker] Using ambient";
+    f_channels.push_back(f_ambient);
+    h_channels.push_back(h_ambient);
+  }
+
+  sph_corr_->correlateSampledSignals(f_channels, h_channels);
   is_completed_ = true;
 }
 

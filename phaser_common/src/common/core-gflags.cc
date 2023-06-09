@@ -89,7 +89,14 @@ DEFINE_string(
 DEFINE_bool(
     save_registered_clouds, true,
     "Defines if the registered clouds should be saved.");
-DEFINE_bool(estimate_rotation, true, "Esttimates the rotation if true.");
-DEFINE_bool(estimate_translation, true, "Esttimates the translation if true.");
-DEFINE_string(truth_path, ".gt.txt", "gt for the translation.");
+DEFINE_bool(estimate_rotation, true, "Estimates the rotation if true.");
+DEFINE_bool(estimate_translation, true, "Estimates the translation if true.");
+DEFINE_bool(
+    synthetic_exp, false,
+    "Defines if the experiment is synthetic: if source and target are same "
+    "pointcloud with random transform applied. Must specify the gt translation "
+    "if true).");
+DEFINE_string(
+    truth_path, ".gt.txt",
+    "gt for the translation, as a txt file with x,y,z translation as rows.");
 }  // namespace phaser_core

@@ -43,7 +43,7 @@ void GaussianNeighborsPeakBasedEval::retrievePeakNeighbors(
     const std::vector<double>& norm_corr, Eigen::ArrayXXd* samples,
     Eigen::VectorXd* weights) const {
   std::vector<int32_t> neighbors_indexes;
-  common::GridUtils::getNeighbors(
+  common::GridUtils::getNeighborsTranslation(
       index, n_voxels, FLAGS_gaussian_samples_radius, &neighbors_indexes);
 
   // getNeighbors returns only the neighbors, we also need the max itself for
