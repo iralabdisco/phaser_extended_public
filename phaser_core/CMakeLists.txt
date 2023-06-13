@@ -121,5 +121,8 @@ catkin_add_gtest(test_spatial_correlation
   test/translation-alignment/spatial-correlation-test.cc)
 target_link_libraries(test_spatial_correlation ${PROJECT_NAME}_lib)
 
+catkin_add_gtest(test_neighbors_peak test/uncertainty-estimate/neighbors-peak-test.cc)
+target_link_libraries(test_neighbors_peak ${PROJECT_NAME}_lib)
+
 cs_install()
 cs_export()
