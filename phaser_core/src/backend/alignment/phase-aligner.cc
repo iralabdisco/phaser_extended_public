@@ -58,12 +58,27 @@ void PhaseAligner::alignRegistered(
   };
   std::vector<Eigen::VectorXd*> g = {
       &g_intensities_, &g_ranges_, &g_reflectivity_, &g_ambient_};
+  
+  auto start = std::chrono::steady_clock::now();
   discretizePointcloud(cloud_prev, f, &hist_);
+  auto end = std::chrono::steady_clock::now();
+  auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+  std::cout << "Time taken discretizing first cloud: " << duration.count() << " milliseconds" << std::endl;
+
+  start = std::chrono::steady_clock::now();
   discretizePointcloud(cloud_reg, g, &hist_);
+  end = std::chrono::steady_clock::now();
+  duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+  std::cout << "Time taken discretizing second cloud: " << duration.count() << " milliseconds" << std::endl;
 
   // f.erase(f.begin() + 1);
   // g.erase(g.begin() + 1);
+  start = std::chrono::steady_clock::now();
   double* c = spatial_correlation_->correlateSignals(f, g);
+  end = std::chrono::steady_clock::now();
+  duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+  std::cout << "Time taken spatial correlation: " << duration.count() << " milliseconds" << std::endl;
+
   previous_correlation_ =
       std::vector<double>(c, c + spatial_correlation_->getCorrelationSize());
 }
