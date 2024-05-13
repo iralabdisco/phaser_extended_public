@@ -28,7 +28,7 @@
     version: master
 - git:
     local-name: fftw3_catkin
-    uri: https://github.com/ethz-asl/fftw3_catkin.git
+    uri: https://github.com/fdila/fftw3_catkin.git
     version: master
 - git:
     local-name: nlopt

@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 REST=$@
 # EXP_DIR="/data/datasets/test/"
-EXP_DIR="/root/ws/src/phaser_experimental/phaser_test_data/test_clouds/os0/"
+EXP_DIR="/home/docker-user/ws/src/phaser/phaser_test_data/test_clouds/os0/"
 current_time=$(date "+%Y-%m-%d-%H-%M")
 RESULT_DIR="/data/phaser_results/$current_time/"
 
